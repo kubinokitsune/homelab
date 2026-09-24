@@ -83,6 +83,18 @@ Tailscale dials out and gives a stable `100.x` address reachable from any
 signed-in device, with nothing exposed to the public internet. `tailscale up
 --ssh` also handles SSH auth.
 
+The host runs as a **subnet router** (`--advertise-routes=192.168.1.0/24`), so
+the containers are reachable remotely at their normal LAN addresses — Mainsail
+is `192.168.1.136` from the couch or from school. Two requirements that both
+fail *silently* if missed:
+
+1. **IP forwarding must be on** (`/etc/sysctl.d/99-tailscale.conf`). Without it
+   the host advertises the route but cannot forward into it.
+2. **The route must be approved once** in the admin console → `homelab-server` →
+   Edit route settings. Tailscale ignores an unapproved route.
+
+`deploy-update.sh` handles (1) and prints a reminder for (2).
+
 **Pi-hole** (LXC 102, `192.168.1.53`) filters ads at the DNS layer for every
 device that uses it as a resolver.
 
