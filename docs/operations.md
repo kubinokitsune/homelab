@@ -125,8 +125,19 @@ already satisfies Pi-hole's `listeningMode = "LOCAL"`; no loosening required.
 **One service is public: LXC 103**, the chem calculator, via Tailscale Funnel.
 Everything protecting it is in the container rather than in front of it — see
 [architecture.md](architecture.md#lxc-103--chemcalc-the-only-public-thing). The
-app itself caps request size and field length, because every one of its API
-routes hands strings to parsers whose cost grows with input length.
+app caps request size and field length (every API route hands strings to parsers
+whose cost grows with input length) and **rate-limits per visitor** — 90/min and
+1200/hour per IP, keyed on the real client from `X-Forwarded-For`, returning 429
+over that. The limiter can't ban at the firewall — Funnel traffic never reaches
+the host's INPUT chain — so it throttles in the app instead, and the 429s show up
+in the traffic report as a flood signal.
+
+**Warden reports the traffic**, not just security: `!traffic [hours]` and a block
+in the daily report (so it reaches Iris' digest) — visitor count, status mix,
+busiest paths, **which country each visitor came from** (free MaxMind GeoLite2,
+optional — no database just means no country labels), and anything off: scanner
+probes, 5xx, guard rejections, 429 floods, one IP hammering. The app never calls
+inward; Warden reads gunicorn's access log through the host.
 
 Deploy an update to it with:
 
