@@ -101,7 +101,7 @@ Per-agent detail, with every command: **[docs/agents.md](docs/agents.md)**
 | Syncthing | `http://192.168.1.115:8384` |
 | Pi-hole | `http://192.168.1.53/admin` |
 | Printer camera | `http://192.168.1.135:8080` |
-| Chem calculator (**public**) | `https://chemcalc.tailf1d903.ts.net` |
+| Chem calculator (**public**) | `https://chemcalc.<tailnet>.ts.net` |
 
 All the `192.168.1.x` addresses work from anywhere via Tailscale's subnet route —
 same URL at home or away. The calculator is the only one the public can reach.
