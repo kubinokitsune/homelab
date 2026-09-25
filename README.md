@@ -3,7 +3,8 @@
 A self-hosted, personality-driven **multi-agent AI system** running on a single
 second-hand Dell OptiPlex — no cloud, no API bills, no GPU.
 
-Twelve agents live in Discord. Each one owns a domain (engineering, 3D printing,
+Twelve agents are built; **ten currently run** as services on the server (Apex
+and Eos exist as code but aren't deployed yet). Each one owns a domain (engineering, 3D printing,
 server health, security, studying, training), shares one skills library,
 remembers things in a vector database, reads and writes a real Obsidian vault,
 and runs on a local LLM. Together they run a 3D printer, watch the server, block

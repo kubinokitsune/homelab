@@ -1,7 +1,10 @@
 # The agents
 
 Twelve Discord agents, each a distinct personality with its own channel, its own
-memory collection, and its own domain. All of them are built on the same
+memory collection, and its own domain. **Ten are currently deployed** — Apex and
+Eos are written but have no service on the server yet, and are marked below.
+
+All of them are built on the same
 [`DiscordAgent` base](skills-library.md), so every one of them also inherits:
 
 | Universal command | Does |
@@ -224,11 +227,18 @@ Runs the lacrosse recruiting pipeline.
 
 `!plan` — training plan · `!progress` — progress over time.
 
+> ⚠️ **Not deployed.** No `agent-apex.service` exists on the server yet; the code
+> is written but has never run.
+
 ## 🌙 Eos — recovery
 **Repo:** [recovery-ai-agent](https://github.com/kubinokitsune/recovery-ai-agent)
 
 `!readiness` — daily readiness score, which Kairos reads when planning and Iris
 reports in the digest.
+
+> ⚠️ **Not deployed.** No `agent-eos.service` exists on the server yet; the code
+> is written but has never run. Note this means Kairos' `!readiness` and Iris'
+> digest currently have no Eos to pull from.
 
 ---
 
