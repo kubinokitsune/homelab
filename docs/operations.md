@@ -65,6 +65,27 @@ library, and the infra repo. A refresh is a commit and push per repo.
 Alerts go to the phone via Pushover, so a failure at 5:30 a.m. is a
 notification, not an eight-hour-later discovery.
 
+### Alert severity
+
+| Severity | Goes to | Meaning |
+|---|---|---|
+| `INFO` | The agent's Discord channel | Routine |
+| `WARNING` | Discord `#warnings` | Worth a look |
+| `CRITICAL` | Discord `#critical` + push (priority 1) | Needs attention today; bypasses Do Not Disturb |
+| `EMERGENCY` | Discord `#critical` + push (priority 2) | **Repeats every 2 min for 30 min until acknowledged** |
+
+The line between the last two is deliberately narrow: **EMERGENCY is only for
+things that get worse while unwatched and that only a person can stop.** An alert
+that wakes you for something that could have waited until morning teaches you to
+ignore the ones that could not.
+
+Exactly two conditions use it today:
+
+- **Mason** — a print that is *still running* and failing. Not one that already
+  stopped: waking up cannot save a print that is already dead.
+- **Warden** — an unexpected *successful* login. Not a blocked brute-force
+  attempt; the difference is whether someone is already inside.
+
 ---
 
 ## Security
