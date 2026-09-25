@@ -139,6 +139,30 @@ _FAILURE_BELOW = -0.12     # was -0.08 — too twitchy, false alarms
 and raw scores are mapped to a **quality percentage** (`_score_to_pct()`:
 failure ≈ 30 %, clean ≈ 70 %) because that's the number a human can act on.
 
+### The swipe labeler
+
+The models are only as good as their labels, and labelling a whole print
+good-or-bad is crude — a print can be clean for three hours and fail in the
+fourth. So frames are labelled **individually**, through a little mobile web app
+(`printer-ai-agent/label_ui/`): it shows one unlabelled frame at a time as a
+card, you **swipe right for good, left for bad**, and the label lands in that
+print's `frame_labels.json`. The failure detector prefers a frame's own label
+over the whole-print one, falling back to the print label when a frame hasn't
+been swiped.
+
+It runs in LXC 100 and is reached from the phone **over Tailscale at
+`http://192.168.1.115:5005`** — deliberately *not* public, since these are
+photos of the print bed. Path-traversal-guarded, and every label is a single
+`POST`.
+
+### Per-print reports in the vault
+
+When a print ends, Mason writes a note to `Print Reports/<date>_<file>.md` —
+outcome, duration, filament, and a strip of the print's frames embedded in the
+note itself — so each print has a durable record in Obsidian, photos included,
+linking to the labeler. Iris does the same for the nightly digest, one dated
+note per night under `Homelab Digests/`.
+
 ---
 
 ## The print critic
