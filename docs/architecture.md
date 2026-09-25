@@ -72,6 +72,10 @@ Proxmox host  192.168.1.135
 ├── LXC 102  "pihole"   ·  192.168.1.53    ← the filter
 │     └── Pi-hole v6 — network-wide DNS ad-blocking
 │
+├── LXC 103  "chemcalc" ·  192.168.1.54    ← the only public thing
+│     ├── gunicorn (non-root) → Chemistry Calculator Flask app
+│     └── Tailscale Funnel → https://chemcalc.<tailnet>.ts.net
+│
 └── (host) ustreamer  :8080  ← USB webcam pointed at the print bed
 ```
 
@@ -107,7 +111,39 @@ container. (This chip is the lab's least reliable component — see
 Network-wide DNS ad-blocking using the StevenBlack blocklist. Because it filters
 at the DNS layer, it covers **every device that uses it as a resolver** — phones,
 TVs, consoles — with no per-device software. Currently serving one floor of the
-house.
+house, plus every device on the tailnet from anywhere in the world (see
+[operations.md](operations.md#security)).
+
+Two limits worth stating, because they look like faults and are not:
+
+- **In-app ads survive it.** Instagram, YouTube and TikTok serve ads from the
+  same domains as their content, so there is no domain to block that would not
+  also break the app. DNS filtering kills third-party ad networks, not
+  first-party ad serving.
+- **iCloud Private Relay bypasses it entirely.** On iPhone/iPad, Safari's DNS
+  goes through Apple's relays and never reaches Pi-hole. It has to be turned off
+  per-device, in two places: iCloud settings *and* per-Wi-Fi "Limit IP Address
+  Tracking".
+
+### LXC 103 — `chemcalc` (the only public thing)
+
+The [Chemistry Calculator](https://github.com/kubinokitsune/chem-calculator)'s
+Flask UI, published to the internet through Tailscale Funnel.
+
+It gets its own container for one reason: **it is the only service here that
+strangers can reach.** Everything about it assumes that. The container is
+unprivileged and holds nothing but this app; gunicorn runs as a non-root system
+user with no shell and no home; `ProtectSystem=strict` means it cannot write
+outside `/tmp`; memory is capped at 768 MB. If the app is ever exploited, the
+attacker is in an empty box with no route to the agents, the vault or the
+printer.
+
+Tailscale runs *inside* this container in **userspace-networking** mode, since an
+unprivileged LXC has no `/dev/net/tun`. That is enough to serve a Funnel.
+
+> **Do not overwrite `/etc/default/tailscaled`.** Its unit file references
+> `${PORT}` from that file, so dropping the variable makes `tailscaled` fail to
+> start with an error that does not mention the cause.
 
 ---
 
@@ -146,12 +182,18 @@ retune Ollama, and getting it wrong mid-print crashes the print.
 | `192.168.1.115` | LXC 100 — Qdrant `:6333`, Syncthing `:8384`, Ollama `:11434` |
 | `192.168.1.136` | LXC 101 — Mainsail `:80`, Moonraker `:7125` |
 | `192.168.1.53`  | LXC 102 — Pi-hole `/admin` |
+| `192.168.1.54`  | LXC 103 — chem calculator (gunicorn on `:5000`, public via Funnel) |
 
 **Remote access is via [Tailscale](https://tailscale.com)** (WireGuard + NAT
 traversal), not a port forward. The router belongs to a family member and can't
 be administered, so no inbound port can be opened. Tailscale solves this by
 dialling *out* from the server, giving a stable `100.x.x.x` address reachable
-from any signed-in device — and nothing is exposed to the public internet.
+from any signed-in device.
+
+The host is also a **subnet router** for `192.168.1.0/24`, so every service above
+answers at its usual LAN address from anywhere in the world. The only thing
+exposed to the *public* internet is LXC 103, via Funnel — see
+[operations.md](operations.md#security) for the full picture.
 
 ---
 

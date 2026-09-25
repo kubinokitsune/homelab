@@ -96,7 +96,22 @@ fail *silently* if missed:
 `deploy-update.sh` handles (1) and prints a reminder for (2).
 
 **Pi-hole** (LXC 102, `192.168.1.53`) filters ads at the DNS layer for every
-device that uses it as a resolver.
+device that uses it as a resolver — including, via Tailscale's global-nameserver
+setting, every device on the tailnet anywhere in the world. That works *because*
+subnet-route SNAT makes remote queries appear to come from `192.168.1.135`, which
+already satisfies Pi-hole's `listeningMode = "LOCAL"`; no loosening required.
+
+**One service is public: LXC 103**, the chem calculator, via Tailscale Funnel.
+Everything protecting it is in the container rather than in front of it — see
+[architecture.md](architecture.md#lxc-103--chemcalc-the-only-public-thing). The
+app itself caps request size and field length, because every one of its API
+routes hands strings to parsers whose cost grows with input length.
+
+Deploy an update to it with:
+
+```bash
+pct exec 103 -- sh -c 'cd /opt/chem-calculator && git pull && systemctl restart chemcalc'
+```
 
 > Two Pi-hole gotchas, both silent: the `pihole` binary lives in
 > `/usr/local/bin`, which is **not on `PATH` under `pct exec`** — commands

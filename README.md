@@ -32,6 +32,9 @@ graph TD
         subgraph L102["LXC 102 · 192.168.1.53"]
             P["Pi-hole — DNS ad-blocking"]
         end
+        subgraph L103["LXC 103 · 192.168.1.54"]
+            C["Chem calculator<br/>gunicorn, non-root"]
+        end
         CAM["USB camera → ustreamer :8080"]
     end
     PRINTER["Ender 3 S1 Pro"] -->|USB| K
@@ -40,6 +43,7 @@ graph TD
     A -->|Moonraker API| K
     A -->|SSH| HOST
     VAULT["Obsidian vault<br/>(laptop ⇄ server)"] <--> S
+    C -->|Tailscale Funnel| WEB["🌍 public internet"]
 ```
 
 Full detail: **[docs/architecture.md](docs/architecture.md)**
@@ -97,6 +101,10 @@ Per-agent detail, with every command: **[docs/agents.md](docs/agents.md)**
 | Syncthing | `http://192.168.1.115:8384` |
 | Pi-hole | `http://192.168.1.53/admin` |
 | Printer camera | `http://192.168.1.135:8080` |
+| Chem calculator (**public**) | `https://chemcalc.tailf1d903.ts.net` |
+
+All the `192.168.1.x` addresses work from anywhere via Tailscale's subnet route —
+same URL at home or away. The calculator is the only one the public can reach.
 
 ---
 
