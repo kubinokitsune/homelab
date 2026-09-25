@@ -74,7 +74,10 @@ machine-learning models. It talks to Klipper through the Moonraker API.
 `!train` · `!label` · `!dataset` · `!report`
 
 Mason also runs without being asked: it watches prints, detects failures, and
-messages you when something is wrong.
+messages you when something is wrong. A print that is *still running* and failing
+pages your phone until you acknowledge it — that one is worth waking for. A print
+that has already stopped is a normal notification, because waking up cannot save
+it (see [operations.md](operations.md#alert-severity)).
 
 ---
 
@@ -93,6 +96,12 @@ services, restarts what's dead, and learns what "normal" looks like.
 | `!cleanup` | Self-healing disk cleanup |
 | `!learn` / `!knowledge` / `!log` | Operational knowledge base and incident log |
 
+`!containers` now also shows each container's usage **against its own
+allocation**, and the watchdog watches LXC 103/101/102 the same way — alerting
+at 85% of a container's own RAM or 90% of its own CPU, or if one stops. The host
+can sit at 10% RAM while a 1 GB container is a breath from being OOM-killed, so
+the percentage that matters is of what each was allotted, not of the machine.
+
 ---
 
 ## 🛡️ Warden — security
@@ -108,10 +117,18 @@ brute-forcers, and bans persist across reboots.
 | `!ports` | Listening ports |
 | `!ban <ip>` / `!bans` / `!unban <ip>` | Ban management |
 | `!audit` | Posture audit — SSH config, firewall, Tailscale |
+| `!traffic [hours]` | Who visited the public calculator, from **which country**, and anything off |
 
 > **Hard whitelist.** `ban()` *refuses* to ban loopback, the LAN, the Tailscale
 > range `100.64.0.0/10`, or anything in `WARDEN_TRUSTED_IPS` — so the agent
 > defending the server can never lock its owner out of it.
+
+Warden also reports the **public calculator's traffic** — visitor count, per-IP
+country/city (free MaxMind GeoLite2), busiest paths, and anomalies (scanner
+probes, 5xx, rate-limit floods). It reads gunicorn's access log through the
+host; the public app never calls inward. The block is in the daily report too,
+so it reaches Iris' digest. An unexpected *successful* SSH login pages the phone
+until acknowledged (see [operations.md](operations.md#alert-severity)).
 
 ---
 
