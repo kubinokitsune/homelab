@@ -1,6 +1,6 @@
 # The skills library
 
-**Repo:** `homelab-agent-skills` 🔒
+**Repo:** [homelab-agent-skills](https://github.com/kubinokitsune/homelab-agent-skills)
 
 This is the heart of the project. Every agent is the same base class plus an
 identity and a handful of domain commands — which means a capability added here

@@ -69,15 +69,16 @@ Full detail: **[docs/architecture.md](docs/architecture.md)**
 
 Per-agent detail, with every command: **[docs/agents.md](docs/agents.md)**
 
-> 🔒 = the agent's own private repo. This hub documents each one in depth;
-> the source can be shared on request. The [chemistry calculator](https://github.com/kubinokitsune/chem-calculator)
-> is public, if you'd like to read real code from the fleet.
+> 🔒 = the agent's own private repo. This hub documents each one in depth; the
+> source can be shared on request. Two repos **are public** if you'd like to read
+> real code: the [shared skills library](https://github.com/kubinokitsune/homelab-agent-skills)
+> (the base class and every skill) and the [chemistry calculator](https://github.com/kubinokitsune/chem-calculator).
 
 ## Shared components
 
 | Repo | What it holds |
 |---|---|
-| `homelab-agent-skills` 🔒 | The `DiscordAgent` base class + every shared skill (vault, vector store, Moonraker, vision, ML, monitoring…). **An agent is an identity + a few commands on top of this.** |
+| [homelab-agent-skills](https://github.com/kubinokitsune/homelab-agent-skills) **(public)** | The `DiscordAgent` base class + every shared skill (vault, vector store, Moonraker, vision, ML, monitoring…). **An agent is an identity + a few commands on top of this.** |
 | `homelab-infra` 🔒 | Printer configs, deploy scripts, autostart, the Discord wiki generator, `.env` template |
 | `AI-School-Agent` 🔒 | A standalone **Node.js** IB assignment assistant (Google Classroom + Playwright research → Obsidian briefs). Predates the Discord fleet and runs on its own — kept here because it writes to the same vault. |
 | **homelab** (this repo) | Front door + documentation |
