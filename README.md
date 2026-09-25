@@ -54,28 +54,32 @@ Full detail: **[docs/architecture.md](docs/architecture.md)**
 
 | Agent | Domain | Repo |
 |---|---|---|
-| 🔧 **Forge** | Engineering mentor — calc, parts, build checklists, datasheets | [engineering-ai-agent](https://github.com/kubinokitsune/engineering-ai-agent) |
-| 🧱 **Mason** | 3D printing — runs, watches, tunes and critiques prints | [printer-ai-agent](https://github.com/kubinokitsune/printer-ai-agent) |
-| 🖥️ **Hermes** | Server caretaker — health, auto-restart, anomaly ML, self-healing | [maintenance-ai-agent](https://github.com/kubinokitsune/maintenance-ai-agent) |
-| 🛡️ **Warden** | Security — auth watch, auto-ban, ports, posture audit | [security-ai-agent](https://github.com/kubinokitsune/security-ai-agent) |
-| 🗂️ **Axiom** | Vault librarian — find, organize, dedupe, MOCs, auto-tagging | [librarian-ai-agent](https://github.com/kubinokitsune/librarian-ai-agent) |
-| 📚 **Codex** | Sources (a local NotebookLM) — ingest files/links/**audio** | [codex-ai-agent](https://github.com/kubinokitsune/codex-ai-agent) |
-| 🎓 **Chiron** | Tutor — lessons, quizzes, spaced-repetition flashcards | [tutor-ai-agent](https://github.com/kubinokitsune/tutor-ai-agent) |
-| 📅 **Kairos** | Scheduler — day plans, calendar, plain-English scheduling | [scheduler-ai-agent](https://github.com/kubinokitsune/scheduler-ai-agent) |
-| ☀️ **Iris** | Morning digest — compiles every agent's report + news | [digest-ai-agent](https://github.com/kubinokitsune/digest-ai-agent) |
-| 📋 **Scout** | Lacrosse recruiting pipeline | [recruitment-ai-agent](https://github.com/kubinokitsune/recruitment-ai-agent) |
-| 🏋️ **Apex** | Gym — training plans and progress | [gym-ai-agent](https://github.com/kubinokitsune/gym-ai-agent) |
-| 🌙 **Eos** | Recovery — daily readiness scoring | [recovery-ai-agent](https://github.com/kubinokitsune/recovery-ai-agent) |
+| 🔧 **Forge** | Engineering mentor — calc, parts, build checklists, datasheets | `engineering-ai-agent` 🔒 |
+| 🧱 **Mason** | 3D printing — runs, watches, tunes and critiques prints | `printer-ai-agent` 🔒 |
+| 🖥️ **Hermes** | Server caretaker — health, auto-restart, anomaly ML, self-healing | `maintenance-ai-agent` 🔒 |
+| 🛡️ **Warden** | Security — auth watch, auto-ban, ports, posture audit | `security-ai-agent` 🔒 |
+| 🗂️ **Axiom** | Vault librarian — find, organize, dedupe, MOCs, auto-tagging | `librarian-ai-agent` 🔒 |
+| 📚 **Codex** | Sources (a local NotebookLM) — ingest files/links/**audio** | `codex-ai-agent` 🔒 |
+| 🎓 **Chiron** | Tutor — lessons, quizzes, spaced-repetition flashcards | `tutor-ai-agent` 🔒 |
+| 📅 **Kairos** | Scheduler — day plans, calendar, plain-English scheduling | `scheduler-ai-agent` 🔒 |
+| ☀️ **Iris** | Morning digest — compiles every agent's report + news | `digest-ai-agent` 🔒 |
+| 📋 **Scout** | Lacrosse recruiting pipeline | `recruitment-ai-agent` 🔒 |
+| 🏋️ **Apex** | Gym — training plans and progress | `gym-ai-agent` 🔒 |
+| 🌙 **Eos** | Recovery — daily readiness scoring | `recovery-ai-agent` 🔒 |
 
 Per-agent detail, with every command: **[docs/agents.md](docs/agents.md)**
+
+> 🔒 = the agent's own private repo. This hub documents each one in depth;
+> the source can be shared on request. The [chemistry calculator](https://github.com/kubinokitsune/chem-calculator)
+> is public, if you'd like to read real code from the fleet.
 
 ## Shared components
 
 | Repo | What it holds |
 |---|---|
-| [homelab-agent-skills](https://github.com/kubinokitsune/homelab-agent-skills) | The `DiscordAgent` base class + every shared skill (vault, vector store, Moonraker, vision, ML, monitoring…). **An agent is an identity + a few commands on top of this.** |
-| [homelab-infra](https://github.com/kubinokitsune/homelab-infra) | Printer configs, deploy scripts, autostart, the Discord wiki generator, `.env` template |
-| [AI-School-Agent](https://github.com/kubinokitsune/AI-School-Agent) | A standalone **Node.js** IB assignment assistant (Google Classroom + Playwright research → Obsidian briefs). Predates the Discord fleet and runs on its own — kept here because it writes to the same vault. |
+| `homelab-agent-skills` 🔒 | The `DiscordAgent` base class + every shared skill (vault, vector store, Moonraker, vision, ML, monitoring…). **An agent is an identity + a few commands on top of this.** |
+| `homelab-infra` 🔒 | Printer configs, deploy scripts, autostart, the Discord wiki generator, `.env` template |
+| `AI-School-Agent` 🔒 | A standalone **Node.js** IB assignment assistant (Google Classroom + Playwright research → Obsidian briefs). Predates the Discord fleet and runs on its own — kept here because it writes to the same vault. |
 | **homelab** (this repo) | Front door + documentation |
 
 ---

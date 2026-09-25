@@ -26,7 +26,7 @@ live data and vault context. Two conveniences on top:
 ---
 
 ## 🔧 Forge — engineering mentor
-**Repo:** [engineering-ai-agent](https://github.com/kubinokitsune/engineering-ai-agent)
+**Repo:** `engineering-ai-agent` 🔒
 
 The most built-out agent after Mason. Forge is a project partner: it does the
 maths, keeps the shopping list, tracks build progress, and remembers what broke
@@ -50,7 +50,7 @@ last time.
 ---
 
 ## 🧱 Mason — 3D printing
-**Repo:** [printer-ai-agent](https://github.com/kubinokitsune/printer-ai-agent) · **Deep dive:** [printer.md](printer.md)
+**Repo:** `printer-ai-agent` 🔒 · **Deep dive:** [printer.md](printer.md)
 
 By far the largest agent — full control of the printer, a camera, and two
 machine-learning models. It talks to Klipper through the Moonraker API.
@@ -82,7 +82,7 @@ it (see [operations.md](operations.md#alert-severity)).
 ---
 
 ## 🖥️ Hermes — server caretaker
-**Repo:** [maintenance-ai-agent](https://github.com/kubinokitsune/maintenance-ai-agent)
+**Repo:** `maintenance-ai-agent` 🔒
 
 Watches the machine that everything else depends on. A ~120 s watchdog checks
 services, restarts what's dead, and learns what "normal" looks like.
@@ -105,7 +105,7 @@ the percentage that matters is of what each was allotted, not of the machine.
 ---
 
 ## 🛡️ Warden — security
-**Repo:** [security-ai-agent](https://github.com/kubinokitsune/security-ai-agent)
+**Repo:** `security-ai-agent` 🔒
 
 Watches authentication and network posture. A ~300 s watchdog auto-bans
 brute-forcers, and bans persist across reboots.
@@ -133,7 +133,7 @@ until acknowledged (see [operations.md](operations.md#alert-severity)).
 ---
 
 ## 🗂️ Axiom — vault librarian
-**Repo:** [librarian-ai-agent](https://github.com/kubinokitsune/librarian-ai-agent)
+**Repo:** `librarian-ai-agent` 🔒
 
 Curates the Obsidian vault: finds things, spots rot, and organises.
 
@@ -153,7 +153,7 @@ Curates the Obsidian vault: finds things, spots rot, and organises.
 ---
 
 ## 📚 Codex — sources (a local NotebookLM)
-**Repo:** [codex-ai-agent](https://github.com/kubinokitsune/codex-ai-agent)
+**Repo:** `codex-ai-agent` 🔒
 
 Ingest a pile of material, then ask questions answered **from those sources
 only**, with citations.
@@ -172,7 +172,7 @@ CPU int8) — so lecture recordings and voice memos become searchable sources.
 ---
 
 ## 🎓 Chiron — tutor
-**Repo:** [tutor-ai-agent](https://github.com/kubinokitsune/tutor-ai-agent)
+**Repo:** `tutor-ai-agent` 🔒
 
 Active recall with a real spaced-repetition scheduler.
 
@@ -187,7 +187,7 @@ Active recall with a real spaced-repetition scheduler.
 ---
 
 ## 📅 Kairos — scheduler
-**Repo:** [scheduler-ai-agent](https://github.com/kubinokitsune/scheduler-ai-agent)
+**Repo:** `scheduler-ai-agent` 🔒
 
 Plans the day around fixed anchors (school, training) and how recovered you are.
 
@@ -205,7 +205,7 @@ the intent and date, then adds, moves or cancels the event.
 ---
 
 ## ☀️ Iris — the morning digest
-**Repo:** [digest-ai-agent](https://github.com/kubinokitsune/digest-ai-agent)
+**Repo:** `digest-ai-agent` 🔒
 
 The front page. Iris collects every other agent's report, the calendar, and the
 news into one briefing — deliberately terse, no filler.
@@ -226,7 +226,7 @@ shows up in the morning with how far it got.
 ---
 
 ## 📋 Scout — recruiting
-**Repo:** [recruitment-ai-agent](https://github.com/kubinokitsune/recruitment-ai-agent)
+**Repo:** `recruitment-ai-agent` 🔒
 
 Runs the lacrosse recruiting pipeline.
 
@@ -240,7 +240,7 @@ Runs the lacrosse recruiting pipeline.
 ---
 
 ## 🏋️ Apex — gym
-**Repo:** [gym-ai-agent](https://github.com/kubinokitsune/gym-ai-agent)
+**Repo:** `gym-ai-agent` 🔒
 
 `!plan` — training plan · `!progress` — progress over time.
 
@@ -248,7 +248,7 @@ Runs the lacrosse recruiting pipeline.
 > is written but has never run.
 
 ## 🌙 Eos — recovery
-**Repo:** [recovery-ai-agent](https://github.com/kubinokitsune/recovery-ai-agent)
+**Repo:** `recovery-ai-agent` 🔒
 
 `!readiness` — daily readiness score, which Kairos reads when planning and Iris
 reports in the digest.
@@ -261,7 +261,7 @@ reports in the digest.
 
 ## Not part of the fleet: 🎒 AI-School-Agent
 
-[AI-School-Agent](https://github.com/kubinokitsune/AI-School-Agent) is a
+`AI-School-Agent` 🔒 is a
 standalone **Node.js** tool that predates the Discord fleet. It opens Google
 Classroom in Chrome, reads an assignment, researches it with Playwright, reads
 local files and Google Docs, and writes a structured IB assignment brief into

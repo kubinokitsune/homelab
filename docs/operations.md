@@ -22,7 +22,7 @@ hardened so the fleet comes back on its own after a power cut.
 
 ## Deploying
 
-`deploy-update.sh` (in [homelab-infra](https://github.com/kubinokitsune/homelab-infra))
+`deploy-update.sh` (in `homelab-infra` 🔒)
 is run **from the laptop, on the home network**. It:
 
 1. `scp`s changed files to the host, then `pct push`es them into LXC 100
@@ -172,7 +172,7 @@ Two documentation surfaces, kept in sync by hand:
 1. **This repo** — the deep explanations.
 2. **The Discord agent wiki** — an in-channel reference of every agent and
    command, posted and edited in place by `post_wiki.py` in
-   [homelab-infra](https://github.com/kubinokitsune/homelab-infra). It updates
+   `homelab-infra` 🔒. It updates
    the existing messages rather than reposting, and handles HTTP 429 rate limits
    with retry-after.
 

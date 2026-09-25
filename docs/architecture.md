@@ -128,7 +128,8 @@ Two limits worth stating, because they look like faults and are not:
 ### LXC 103 — `chemcalc` (the only public thing)
 
 The [Chemistry Calculator](https://github.com/kubinokitsune/chem-calculator)'s
-Flask UI, published to the internet through Tailscale Funnel.
+Flask UI (its own **public** repo), published to the internet through Tailscale
+Funnel.
 
 It gets its own container for one reason: **it is the only service here that
 strangers can reach.** Everything about it assumes that. The container is

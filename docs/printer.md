@@ -2,7 +2,7 @@
 
 **Hardware:** Creality Ender 3 S1 Pro, reflashed with **Klipper**
 **Host:** LXC 101 · `192.168.1.136` · pinned to its own CPU core
-**Agent:** [Mason](agents.md#-mason--3d-printing) ([printer-ai-agent](https://github.com/kubinokitsune/printer-ai-agent))
+**Agent:** [Mason](agents.md#-mason--3d-printing) (`printer-ai-agent` 🔒)
 
 ---
 
