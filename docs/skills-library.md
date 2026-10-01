@@ -137,7 +137,7 @@ works as one message.
 |---|---|
 | **Core** | `discord_agent` · `llm` · `config` · `result` · `logging` · `errors` · `notifications` |
 | **Vault & knowledge** | `obsidian_vault` · `vault_index` · `vault_librarian` · `vault_tagger` · `vector_store` · `source_ingest` · `file_ops` |
-| **External info** | `web_search` · `news` · `audio_transcribe` |
+| **External info** | `web_search` · `news` · `audio_transcribe` · `email_reader` (read-only) · `web_traffic` |
 | **Coordination** | `agent_mail` · `agent_reports` · `scheduling` · `calendar` |
 | **Printer** | `moonraker` · `camera` · `vision` · `print_recorder` · `print_tuning` |
 | **Machine learning** | `failure_detector` · `anomaly_detector` · `vault_tagger` · `flashcards` (SM-2) |

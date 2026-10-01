@@ -145,7 +145,7 @@ lab generates about itself.
 |---|---|---|
 | **RandomForest** | `failure_detector.py` | Supervised print-failure classification from labelled prints |
 | **IsolationForest** | `failure_detector.py` | Unsupervised anomaly detection — learns what a *clean* print looks like and flags deviation |
-| **IsolationForest** | `anomaly_detector.py` | Same idea for server metrics — Hermes flags unusual behaviour without hard thresholds |
+| **IsolationForest** | `anomaly_detector.py` | Server-metric anomalies — scaled features, scored on a **median of recent readings** so a normal load spike doesn't fire, catching *unusual combinations* while Hermes' hard thresholds handle single-metric extremes |
 | **Nearest-centroid** | `vault_tagger.py` | Auto-tags vault notes by embedding-space proximity to established topics |
 | **SM-2** | `flashcards.py` | Spaced-repetition scheduling for Chiron |
 | **Clustering** | `error_log.py` | Groups Forge's logged errors to surface recurring failure patterns |

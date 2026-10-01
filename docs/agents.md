@@ -214,6 +214,7 @@ news into one briefing — deliberately terse, no filler.
 |---|---|
 | `!digest` | Produce the briefing now |
 | `!news` | Just the news section |
+| `!inbox` | Read-only summary of recent email |
 
 News comes from **real RSS feeds** — NYT World, BBC World, La Nación (CR), The
 Tico Times, El País — and every item is date-checked, with anything older than
@@ -221,7 +222,14 @@ Tico Times, El País — and every item is date-checked, with anything older tha
 articles as current.)
 
 Iris also reports **overnight progress on multi-day prints**, so a 2-day job
-shows up in the morning with how far it got.
+shows up in the morning with how far it got. Each night's digest is saved to
+Obsidian as a dated note (`Homelab Digests/<date>.md`).
+
+**Read-only email.** With a Gmail app password configured, Iris summarises the
+inbox — sender, subject, a one-line preview — in `!inbox` and the morning digest.
+It only ever *reads*: no replying, sending or deleting, and email text is shown,
+never fed to the LLM to act on, so a message can't instruct the agent. (The
+reply/triage side is deliberately left to a human.)
 
 ---
 
