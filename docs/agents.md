@@ -199,8 +199,11 @@ Plans the day around fixed anchors (school, training) and how recovered you are.
 | `!event` / `!unevent` / `!calendar` | Calendar management |
 
 **Plain-English scheduling:** you don't need `!event`. Say *"physics test next
-Tuesday"*, *"move the dentist to Friday"* or *"cancel golf"* and Kairos parses
-the intent and date, then adds, moves or cancels the event.
+Tuesday"*, *"move the dentist to Friday"*, *"cancel golf"*, or *"clear tomorrow
+afternoon for SAT practice"* and Kairos adds, moves, cancels, or **blocks** the
+time. Relative dates (tomorrow / this Friday / next Tuesday / in 2 weeks) are
+resolved **in code, not by the LLM** — a small model got the date wrong, so the
+arithmetic is deterministic now.
 
 ---
 

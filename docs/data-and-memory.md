@@ -28,20 +28,32 @@ Agents both **read** it (as retrieval context) and **write** to it:
 
 ```
 vault/
-├── Agent Notes/
-│   ├── Mason/          ← !note and !learn from Mason land here
-│   ├── Forge/
-│   └── …
-├── Engineering Studies/
+├── 🤖 Homelab/              ← ALL machine-generated content, one graph cluster
+│   ├── Homelab.md           ← hub note
+│   ├── Digests/             ← Iris, one note per night
+│   ├── Print Reports/       ← Mason, per finished print
+│   ├── Agent Notes/
+│   │   ├── Mason/            ← !note / !learn land here
+│   │   └── Forge/
+│   └── Server Incident Log.md  ← Hermes
+├── Engineering Studies/     ← personal notes (untouched by this)
 ├── School/
 ├── 02_Topics/
 └── …
 ```
 
-Each agent's notes folder is `Agent Notes/<Name>/`, written by
-`_write_vault_note()`. Crucially, `!learn` writes a **visible vault note** as
-well as storing the vector — so "the agent learned something" is verifiable by
-opening a file, not by trusting a claim.
+Everything the agents generate lives under a single **`🤖 Homelab/`** section,
+kept separate from personal notes but in the same vault so it stays linkable.
+Each note links to its section hub and each hub to `[[Homelab]]`, so in Obsidian's
+graph the homelab content forms one connected cluster, subdivided by section,
+away from the personal notes — and **Axiom leaves this section alone** (it's on
+the no-edit list, so the look-alike daily digests are never merged as
+"duplicates"). Notes are named `<Agent> - <topic> - <stamp>` so a graph node says
+who wrote it and about what.
+
+Crucially, `!learn` writes a **visible vault note** as well as storing the vector
+— so "the agent learned something" is verifiable by opening a file, not by
+trusting a claim.
 
 ---
 
