@@ -14,6 +14,7 @@ reachable only from my own devices over Tailscale.
 | **Calendar** | A week view (a day view on a phone) of Kairos' plan and events. Click empty time to add, drag to move, click to edit or delete, or type plain English into "Tell Kairos" |
 | **Printer** | Live camera, job progress with ETA, temperature chart, live speed/flow/fan tuning, the file list, and every control from pause to e-stop — all through Mason |
 | **Server** | Host load/temperature/RAM/disk, 6 h–7 day history charts with the alert thresholds drawn in, every container against its own allocation, every service with a restart button, the anomaly model's read, and the incident log — all through Hermes |
+| **Security** | What the internet, the tailnet and the home network can each reach; a posture checklist with concrete fixes; SSH logins split by source; every open port and who can reach it; sessions; firewall bans with ban/unban; and the public calculator's visitors, countries and scanner probes — all through Warden |
 | **Activity** | Every agent post, alert and phone page, streamed live; warnings pop a notification and the bell counts what you haven't seen |
 
 Discord keeps working exactly as before. Both are front ends to the same agents,
@@ -21,9 +22,11 @@ with the same calendar, vault and memory.
 
 ![Overview: server, today, fleet status and the latest activity](images/hub-overview.png)
 
-<details><summary><b>More screenshots</b> — the server and printer panels</summary>
+<details><summary><b>More screenshots</b> — the server, security and printer panels</summary>
 
 ![Server panel: host, history charts, containers vs. their allocations, services, incident log](images/hub-server.png)
+
+![Security panel (IP addresses blurred here): exposure, posture, SSH logins by source, ports, bans, calculator traffic](images/hub-security.png)
 
 ![Printer panel (camera blurred here): status banner, controls, temperatures, live tuning, files](images/hub-printer.png)
 
@@ -131,6 +134,31 @@ started a second log; it's now back in the Homelab section. And pressing
 "restart" on Hermes himself would have killed him mid-reply — he now answers
 first and restarts two seconds later.
 
+### The security panel: answer "who can reach what" first
+
+The page opens with three zones — the public internet (only the calculator,
+via Tailscale Funnel), the tailnet (this hub, via Serve), and the home network
+(everything bound to all interfaces) — because exposure is the question that
+matters most and the one a list of ports answers worst. Below it: a posture
+checklist with the exact fix for each finding, SSH logins **split by source**,
+every port with who can reach it, sessions, bans, and the calculator's traffic.
+Bans and unbans are `!commands` to Warden, so they're confirm-gated and keep his
+refusal to ban the LAN, the tailnet or the owner.
+
+Two design notes. Logins are counted **on the host** (`journalctl | sed | uniq
+-c`) rather than shipped over: the agents SSH in about 7,000 times a day, and a
+week of raw log lines is megabytes per refresh. And splitting by source is what
+makes the number readable — "7,400 logins" is alarming until it says 7,100 are
+the agents checking on the host and the rest are my laptop.
+
+What it surfaced, honestly listed on the page: SSH accepts passwords and root
+can log in with one (reachable only from home and the tailnet, but the fix is
+keys-only); the printer camera and rpcbind are open to anyone on the Wi-Fi; and
+the calculator's "visitors" are mostly bots probing for WordPress logins that
+don't exist. There's deliberately no "ban" button on web visitors: Funnel
+traffic never reaches the host firewall, so the calculator's rate limiter is
+the right tool there.
+
 ### Live activity without the agents knowing
 
 Agents append every proactive post, alert and phone page to a shared log; the
@@ -159,6 +187,15 @@ Building a second front end is a good way to find bugs in the first one:
 - **Grading an empty bed.** Mason's `!look` ran its quality model whether or not
   anything was printing — an empty bed came back "imperfect, 40%". It now only
   grades a print in progress (or just finished) and otherwise shows the bed.
+- **A traffic report that saw two hours a day.** The calculator's access log is
+  rotated daily and Warden only read the current file, so his 9 pm report (and
+  the digest) covered just the hours since the last rotation — 1 visitor in a
+  week, when the real number was 43. He now reads the rotated logs too.
+- **A confirmation that never confirmed.** The hub's dialogs waited for the
+  browser's dialog `close` event, which some embedded browsers deliver late or
+  not at all — so a confirmed ban sat "thinking" forever. They now resolve from
+  the button press itself (the form's submit event names the button), with
+  `close` as a fallback.
 - **A command that didn't exist.** `!estop` told you to run `!firmware_restart`,
   which wasn't a command anywhere. Mason now has `!firmware`, which is also the
   panel's "Restart firmware" button — the step needed after switching the printer
@@ -168,8 +205,8 @@ Building a second front end is a good way to find bugs in the first one:
 
 ## What's next
 
-The hub is the start of an app. Next up: a security panel, vault search,
-uploads and streaming replies. For the phone, the plan is free first —
+The hub is the start of an app. Next up: vault search, uploads and streaming
+replies. For the phone, the plan is free first —
 a home-screen web app, web push, and an iOS Shortcuts automation that sends
 Apple Health data (sleep, HRV, resting heart rate) to the hub so Eos can compute
 readiness — and a native wrapper only if something genuinely needs one. The full

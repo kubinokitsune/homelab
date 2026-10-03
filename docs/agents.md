@@ -131,7 +131,9 @@ brute-forcers, and bans persist across reboots.
 Warden also reports the **public calculator's traffic** — visitor count, per-IP
 country/city (free MaxMind GeoLite2), busiest paths, and anomalies (scanner
 probes, 5xx, rate-limit floods). It reads gunicorn's access log through the
-host; the public app never calls inward. The block is in the daily report too,
+host — including the rotated files: until October 2026 it read only the current
+one, which the daily rotation empties, so "24 hours" quietly meant "since the
+last rotation". The public app never calls inward. The block is in the daily report too,
 so it reaches Iris' digest. An unexpected *successful* SSH login pages the phone
 until acknowledged (see [operations.md](operations.md#alert-severity)).
 

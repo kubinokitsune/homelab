@@ -59,8 +59,9 @@ Full detail: **[docs/architecture.md](docs/architecture.md)**
 ![Homelab Hub: server stats, today's calendar, fleet status and live activity](docs/images/hub-overview.png)
 
 A private web interface to the whole fleet — dashboard, chat with any agent, a
-drag-and-drop calendar, a printer panel with the live camera, a server panel,
-and live alerts — reachable only from my own devices over Tailscale.
+drag-and-drop calendar, a printer panel with the live camera, server and
+security panels, and live alerts — reachable only from my own devices over
+Tailscale.
 How it works: **[docs/hub.md](docs/hub.md)** · how all of this came to be,
 stage by stage: **[docs/history.md](docs/history.md)**
 

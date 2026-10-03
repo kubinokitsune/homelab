@@ -137,8 +137,12 @@ so the agent defending the server can never lock its owner out of it.
   to schedule real times ("5 hours in the afternoon"), and to flag clashes.
 - **The [Homelab Hub](hub.md)** — a web interface to the whole fleet: dashboard,
   chat with any agent, a drag-and-drop calendar, a printer panel with the live
-  camera, a server panel, and a live activity feed — reachable only from my own
-  devices, and added without changing a single agent's commands.
+  camera, server and security panels, and a live activity feed — reachable only
+  from my own devices, and added without changing a single agent's commands.
+- **Building the security panel fixed the traffic report.** Warden had only
+  been reading the current, daily-rotated access log, so the public calculator
+  looked like it had one visitor a week. The real number was 43 — most of them
+  bots probing for WordPress logins that don't exist.
 
 ![The Homelab Hub overview](images/hub-overview.png)
 
@@ -147,24 +151,26 @@ so the agent defending the server can never lock its owner out of it.
 - A UPS and a new CMOS battery — the fix for Stage 7's root cause.
 - Eos and Apex, fed with Apple Health data by an iOS Shortcut, and the hub as an
   app on the phone.
-- A security panel in the hub; folding the print labeller into the printer panel.
+- SSH keys-only, and closing the two services open to the whole home network
+  (the camera stream and rpcbind) — all flagged by the hub's security panel.
+- Folding the print labeller into the printer panel.
 - Bigger hardware with a PCIe slot (for a GPU) once the four-core box runs out.
 
 ## By the numbers
 
-As of October 2, 2026: **19 repositories, 251 commits**.
+As of October 2, 2026: **19 repositories, 256 commits**.
 
 | Repository | First commit | Commits | |
 |---|---|---|---|
 | `chem-calculator` | 2026-05-22 | 42 | public |
 | `AI-School-Agent` | 2026-05-26 | 7 | 🔒 |
 | `engineering-ai-agent` (Forge) | 2026-05-27 | 25 | 🔒 |
-| `homelab-agent-skills` | 2026-06-16 | 53 | public |
-| `homelab-infra` | 2026-06-16 | 24 | 🔒 |
-| the other agents (11 repos) | 2026-06-16 → 06-21 | 77 | 🔒 |
+| `homelab-agent-skills` | 2026-06-16 | 54 | public |
+| `homelab-infra` | 2026-06-16 | 25 | 🔒 |
+| the other agents (11 repos) | 2026-06-16 → 06-21 | 78 | 🔒 |
 | `chemcalc-handheld` | 2026-09-22 | 4 | public |
-| `homelab` (this repo) | 2026-09-24 | 16 | public |
-| `homelab-hub` | 2026-10-02 | 3 | 🔒 |
+| `homelab` (this repo) | 2026-09-24 | 17 | public |
+| `homelab-hub` | 2026-10-02 | 4 | 🔒 |
 
 ## How it was built
 
