@@ -13,10 +13,24 @@ reachable only from my own devices over Tailscale.
 | **Chat** | Talk to any agent exactly like in Discord — plain English or `!commands`, with each agent's commands as one-click shortcuts. Images come through, so Mason's `!snap` shows the camera |
 | **Calendar** | A week view (a day view on a phone) of Kairos' plan and events. Click empty time to add, drag to move, click to edit or delete, or type plain English into "Tell Kairos" |
 | **Printer** | Live camera, job progress with ETA, temperature chart, live speed/flow/fan tuning, the file list, and every control from pause to e-stop — all through Mason |
+| **Server** | Host load/temperature/RAM/disk, 6 h–7 day history charts with the alert thresholds drawn in, every container against its own allocation, every service with a restart button, the anomaly model's read, and the incident log — all through Hermes |
 | **Activity** | Every agent post, alert and phone page, streamed live; warnings pop a notification and the bell counts what you haven't seen |
 
 Discord keeps working exactly as before. Both are front ends to the same agents,
 with the same calendar, vault and memory.
+
+![Overview: server, today, fleet status and the latest activity](images/hub-overview.png)
+
+<details><summary><b>More screenshots</b> — the server and printer panels</summary>
+
+![Server panel: host, history charts, containers vs. their allocations, services, incident log](images/hub-server.png)
+
+![Printer panel (camera blurred here): status banner, controls, temperatures, live tuning, files](images/hub-printer.png)
+
+</details>
+
+> Screenshots are taken with the hub's presentation mode (`?present`), which
+> hides the signed-in account and blurs the camera.
 
 ---
 
@@ -102,6 +116,21 @@ The relay now drops whole frames to cap it at 5 fps (~4 Mbit/s) without
 re-encoding anything, which matters on a server whose CPU belongs to Ollama, and
 phones default to a snapshot every 3 seconds.
 
+### The server panel: through Hermes, the box's own caretaker
+
+Same pattern as the printer: Hermes exposes read-only endpoints (an overview,
+his metric history, the incident log, the hardware), and every action — restart
+a service, free disk space, run the anomaly check — is a `!command` to him, so
+restarts are confirm-gated and logged like any other. Containers are shown
+against **their own** allocations rather than the host's, because a 1 GB
+container can be about to be killed while the host sits at 20% RAM.
+
+Building it turned up two things. The incident log had been left at the vault
+root by an earlier reorganisation, so Hermes' next entry would have quietly
+started a second log; it's now back in the Homelab section. And pressing
+"restart" on Hermes himself would have killed him mid-reply — he now answers
+first and restarts two seconds later.
+
 ### Live activity without the agents knowing
 
 Agents append every proactive post, alert and phone page to a shared log; the
@@ -139,8 +168,8 @@ Building a second front end is a good way to find bugs in the first one:
 
 ## What's next
 
-The hub is the start of an app. Next up: server and security panels, vault
-search, uploads and streaming replies. For the phone, the plan is free first —
+The hub is the start of an app. Next up: a security panel, vault search,
+uploads and streaming replies. For the phone, the plan is free first —
 a home-screen web app, web push, and an iOS Shortcuts automation that sends
 Apple Health data (sleep, HRV, resting heart rate) to the hub so Eos can compute
 readiness — and a native wrapper only if something genuinely needs one. The full

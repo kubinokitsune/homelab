@@ -29,7 +29,11 @@ PAGES = [
     ("printer", "The printer"),
     ("operations", "Operations"),
     ("hub", "Homelab Hub (web UI)"),
+    ("history", "Development history"),
 ]
+# Images live in docs/images/ of the main repo; the wiki is a separate repo, so
+# relative image paths are pointed at the main repo's raw files.
+RAW_IMAGES = "https://raw.githubusercontent.com/kubinokitsune/homelab/main/docs/images/"
 
 # A relative markdown link to a .md doc, optionally under docs/ and with an anchor.
 _DOC_LINK = re.compile(r"\[([^\]]*)\]\((?:docs/)?([a-z0-9-]+)\.md(#[^)]*)?\)")
@@ -48,7 +52,9 @@ def rewrite(text: str) -> str:
     text = _DOC_LINK.sub(sub, text)
     # Links that only make sense inside the repo point back at it.
     return (text.replace("](LICENSE)", f"]({REPO}/blob/main/LICENSE)")
-                .replace("](docs/)", f"]({REPO}/tree/main/docs)"))
+                .replace("](docs/)", f"]({REPO}/tree/main/docs)")
+                .replace("](docs/images/", f"]({RAW_IMAGES}")
+                .replace("](images/", f"]({RAW_IMAGES}"))
 
 
 def main(wiki_dir: str) -> None:
@@ -71,6 +77,9 @@ def main(wiki_dir: str) -> None:
     (out / "_Footer.md").write_text(
         f"Self-hosted multi-agent homelab · [main repo]({REPO}) · MIT\n", encoding="utf-8")
     print(f"built Home + {len(PAGES)} pages into {out}")
+    images = sorted(p.name for p in (docs / "images").glob("*")) if (docs / "images").exists() else []
+    if images:
+        print(f"images are served from the main repo ({len(images)}): push it before checking the wiki")
 
 
 if __name__ == "__main__":
