@@ -23,6 +23,11 @@ live data and vault context. Two conveniences on top:
 - **Command chaining** — several commands in one message are split and run in
   order.
 
+Every agent is also reachable **without Discord**, from the
+[Homelab Hub](hub.md) web UI — same commands, same memory, through a loopback
+bridge in the shared base class. There, commands that move the printer, restart
+a service or change the firewall ask for confirmation first.
+
 ---
 
 ## 🔧 Forge — engineering mentor

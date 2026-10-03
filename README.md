@@ -8,7 +8,8 @@ and Eos exist as code but aren't deployed yet). Each one owns a domain (engineer
 server health, security, studying, training), shares one skills library,
 remembers things in a vector database, reads and writes a real Obsidian vault,
 and runs on a local LLM. Together they run a 3D printer, watch the server, block
-ads, and file a morning briefing.
+ads, and file a morning briefing. I talk to them in Discord or through a private
+**web hub** that only my own devices can reach.
 
 > **This repo is the front door.** The code lives in the per-component repos
 > linked below; the in-depth explanations live in [`docs/`](docs/).
@@ -25,6 +26,7 @@ graph TD
             O["Ollama<br/>llama3.2 · nomic-embed · moondream"]
             Q["Qdrant<br/>vector memory"]
             S["Syncthing<br/>vault sync"]
+            H["Homelab Hub<br/>web UI"]
         end
         subgraph L101["LXC 101 · 192.168.1.136"]
             K["Klipper + Moonraker + Mainsail"]
@@ -44,6 +46,8 @@ graph TD
     A -->|SSH| HOST
     VAULT["Obsidian vault<br/>(laptop ⇄ server)"] <--> S
     C -->|Tailscale Funnel| WEB["🌍 public internet"]
+    H <-->|loopback bridge| A
+    H -->|Tailscale Serve| ME["📱 my devices<br/>tailnet only"]
 ```
 
 Full detail: **[docs/architecture.md](docs/architecture.md)**
@@ -80,6 +84,7 @@ Per-agent detail, with every command: **[docs/agents.md](docs/agents.md)**
 |---|---|
 | [homelab-agent-skills](https://github.com/kubinokitsune/homelab-agent-skills) **(public)** | The `DiscordAgent` base class + every shared skill (vault, vector store, Moonraker, vision, ML, monitoring…). **An agent is an identity + a few commands on top of this.** |
 | `homelab-infra` 🔒 | Printer configs, deploy scripts, autostart, the Discord wiki generator, `.env` template |
+| `homelab-hub` 🔒 | The tailnet-only **web UI**: dashboard, chat with any agent, drag-and-drop calendar — [how it works](docs/hub.md) |
 | `AI-School-Agent` 🔒 | A standalone **Node.js** IB assignment assistant (Google Classroom + Playwright research → Obsidian briefs). Predates the Discord fleet and runs on its own — kept here because it writes to the same vault. |
 | **homelab** (this repo) | Front door + documentation |
 
@@ -95,11 +100,13 @@ Per-agent detail, with every command: **[docs/agents.md](docs/agents.md)**
 | [data-and-memory.md](docs/data-and-memory.md) | Obsidian vault, Qdrant, Ollama, RAG, and the anti-hallucination rules |
 | [printer.md](docs/printer.md) | Klipper stack, Mason's vision + ML failure detection |
 | [operations.md](docs/operations.md) | Deploy, backup, monitoring, security, remote access |
+| [hub.md](docs/hub.md) | The web UI — one bridge in the base class, tailnet-only access, server-enforced confirmations, the calendar |
 
 ## Dashboards
 
 | Service | URL |
 |---|---|
+| **Homelab Hub** (agents, calendar, server) | `https://homelab-server.<tailnet>.ts.net` — tailnet only |
 | Mainsail (printer) | `http://192.168.1.136` |
 | Proxmox | `https://192.168.1.135:8006` |
 | Qdrant | `http://192.168.1.115:6333/dashboard` |

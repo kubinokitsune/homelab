@@ -116,6 +116,13 @@ fail *silently* if missed:
 
 `deploy-update.sh` handles (1) and prints a reminder for (2).
 
+**The Homelab Hub is tailnet-only**, published by `tailscale serve` on the host
+(Serve, not Funnel) — see [hub.md](hub.md). Because the hub can run real
+commands, it also refuses anything that doesn't arrive through the host: with
+subnet-route SNAT every tailnet request comes from `192.168.1.135`, so a plain
+LAN device gets a 403. Dangerous commands additionally need an explicit confirm,
+enforced by each agent's bridge rather than by the UI.
+
 **Pi-hole** (LXC 102, `192.168.1.53`) filters ads at the DNS layer for every
 device that uses it as a resolver — including, via Tailscale's global-nameserver
 setting, every device on the tailnet anywhere in the world. That works *because*
@@ -167,13 +174,16 @@ pct exec 103 -- sh -c 'cd /opt/chem-calculator && git pull && systemctl restart 
 
 ## Documentation upkeep
 
-Two documentation surfaces, kept in sync by hand:
+Three documentation surfaces:
 
 1. **This repo** — the deep explanations.
-2. **The Discord agent wiki** — an in-channel reference of every agent and
+2. **The GitHub wiki** — generated from `README.md` + `docs/` by
+   `scripts/build-wiki.py`, which rewrites the links for wiki page names. Edit the
+   docs, never the wiki directly, then rebuild.
+3. **The Discord agent wiki** — an in-channel reference of every agent and
    command, posted and edited in place by `post_wiki.py` in
    `homelab-infra` 🔒. It updates
    the existing messages rather than reposting, and handles HTTP 429 rate limits
    with retry-after.
 
-**When an agent gains or loses a command, update both.**
+**When an agent gains or loses a command, update all three.**
