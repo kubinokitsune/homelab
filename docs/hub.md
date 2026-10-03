@@ -12,6 +12,8 @@ reachable only from my own devices over Tailscale.
 | **Overview** | Server load, temperature, RAM, disk and uptime; today's and the next 14 days' events; every agent with a live status dot; today's agent reports |
 | **Chat** | Talk to any agent exactly like in Discord — plain English or `!commands`, with each agent's commands as one-click shortcuts. Images come through, so Mason's `!snap` shows the camera |
 | **Calendar** | A week view (a day view on a phone) of Kairos' plan and events. Click empty time to add, drag to move, click to edit or delete, or type plain English into "Tell Kairos" |
+| **Printer** | Live camera, job progress with ETA, temperature chart, live speed/flow/fan tuning, the file list, and every control from pause to e-stop — all through Mason |
+| **Activity** | Every agent post, alert and phone page, streamed live; warnings pop a notification and the bell counts what you haven't seen |
 
 Discord keeps working exactly as before. Both are front ends to the same agents,
 with the same calendar, vault and memory.
@@ -87,6 +89,28 @@ notification says *"heads up — that overlaps golf."* The fixed blocks drawn on
 the grid (school, gym, golf) come from the **same function** the conflict check
 uses, so what you see and what Kairos warns about can't disagree.
 
+### The printer panel: through Mason, and frugal with bandwidth
+
+The panel reads structured state from Mason's bridge endpoints, but every
+button just sends Mason the same `!command` you'd type in Discord — so his
+bounds-checking and the confirmations apply without being reimplemented.
+
+The camera is relayed through the hub rather than linked (it's plain HTTP, which
+a browser blocks inside an HTTPS page, and this keeps it tailnet-only). Measuring
+it found the raw stream runs at **~25 Mbit/s** — about 11 GB an hour on a phone.
+The relay now drops whole frames to cap it at 5 fps (~4 Mbit/s) without
+re-encoding anything, which matters on a server whose CPU belongs to Ollama, and
+phones default to a snapshot every 3 seconds.
+
+### Live activity without the agents knowing
+
+Agents append every proactive post, alert and phone page to a shared log; the
+hub tails it and streams new lines to the browser as server-sent events — about
+half a second from an agent writing to a notification on screen. Two details:
+an alert is logged **before** it's sent, so it still appears in the hub when
+Discord or Pushover is down; and a CRITICAL alert that goes to both Discord and
+the phone is one entry, not two.
+
 ---
 
 ## Bugs it shook out
@@ -103,13 +127,21 @@ Building a second front end is a good way to find bugs in the first one:
 - **An event clashing with itself.** Kairos checked for conflicts *after* saving,
   so a new timed event was reported as overlapping itself. Found by clicking
   through the calendar, not by reading the code.
+- **Grading an empty bed.** Mason's `!look` ran its quality model whether or not
+  anything was printing — an empty bed came back "imperfect, 40%". It now only
+  grades a print in progress (or just finished) and otherwise shows the bed.
+- **A command that didn't exist.** `!estop` told you to run `!firmware_restart`,
+  which wasn't a command anywhere. Mason now has `!firmware`, which is also the
+  panel's "Restart firmware" button — the step needed after switching the printer
+  on.
 
 ---
 
 ## What's next
 
-The hub is the start of an app. Roughly in order: live alerts streamed into the
-hub, a printer panel (camera, temperatures, progress, controls), server and
-security panels, vault search, uploads, streaming replies — and eventually a
-native wrapper with push notifications. The full list is in the `homelab-hub`
-README.
+The hub is the start of an app. Next up: server and security panels, vault
+search, uploads and streaming replies. For the phone, the plan is free first —
+a home-screen web app, web push, and an iOS Shortcuts automation that sends
+Apple Health data (sleep, HRV, resting heart rate) to the hub so Eos can compute
+readiness — and a native wrapper only if something genuinely needs one. The full
+list is in the `homelab-hub` README.

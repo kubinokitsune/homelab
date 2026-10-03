@@ -61,7 +61,7 @@ By far the largest agent — full control of the printer, a camera, and two
 machine-learning models. It talks to Klipper through the Moonraker API.
 
 **Printer state & motion**
-`!status` · `!temp` · `!home` · `!zoffset` · `!babystep` · `!savez`
+`!status` · `!temp` · `!home` · `!zoffset` · `!babystep` · `!savez` · `!firmware` (reconnect Klipper after switching the printer on, or after an e-stop)
 
 **Job control**
 `!files` · `!print <file>` · `!pause` · `!resume` · `!cancel` · `!cooldown` · `!estop` · `!job`
