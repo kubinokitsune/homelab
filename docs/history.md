@@ -31,7 +31,7 @@ four months later, the first thing the server would serve to the public.
 
 ## Stage 2 — Agents on a laptop (late May – June 2026)
 
-- **May 26 —** `AI-School-Agent` (Node.js): opens Google Classroom, researches
+- **May 26 —** the school-assignment assistant (Node.js): opens Google Classroom, researches
   an assignment with Playwright, and writes a structured IB brief into Obsidian.
 - **May 27 —** Forge began as an Ollama + Open WebUI + n8n + Discord stack, then
   became a plain Python Discord bot talking to a local model.
@@ -55,21 +55,21 @@ instance each, came out of that.
 
 ## Stage 3 — A real server (June 22 – July 1)
 
-The hardware is a second-hand **Dell OptiPlex 9020M Micro** (i5-4590T, 16 GB,
+The hardware is a second-hand **small-form-factor office PC** (4 cores, 16 GB,
 512 GB SSD).
 
 - **Installed blind.** No display ever showed a picture from it, so **Proxmox
-  VE 9.2** went on completely headless: an auto-install ISO built with an answer
+  VE** went on completely headless: an auto-install ISO built with an answer
   file (from a Debian container on the laptop) that installs itself and comes
   up on the network (**June 24**).
-- **The move.** LXC 100 for the agents, with Ollama and Qdrant in Docker; the
+- **The move.** One container for the agents, with Ollama and Qdrant in Docker; the
   Obsidian vault linked laptop ⇄ server with Syncthing (**June 24**); every
   agent moved off the laptop the next day.
 - **The printer.** The Ender 3 S1 Pro was flashed with Klipper (**June 25**).
   Two lessons that cost hours: this board only reads new firmware from a folder
   named exactly `STM32F4_UPDATE` — anywhere else it silently boots the stock
   firmware — and a failing SD card looks exactly like a failed flash. Klipper got
-  its own container (LXC 101) on its own CPU core, so a busy model can never
+  its own container on its own CPU core, so a busy model can never
   stall a print.
 - **Mason and Hermes** — the printer agent with its camera, and the server
   caretaker — went live (**June 25–26**).
@@ -81,7 +81,7 @@ The hardware is a second-hand **Dell OptiPlex 9020M Micro** (i5-4590T, 16 GB,
 - **June 28–29 —** every agent can be taught (`!learn` / `!recall`), and the
   [honesty rules](data-and-memory.md#the-honesty-rules) arrived after the agents
   were caught inventing temperatures, note titles and saved files.
-- **July 1 —** Pi-hole ad blocking (LXC 102).
+- **July 1 —** Pi-hole ad blocking, in its own container.
 
 ## Stage 4 — Summer (July – August 2026)
 
@@ -104,7 +104,7 @@ so the agent defending the server can never lock its owner out of it.
   custom PCB (**September 22**).
 - **Going public (September 24).** The first plan was a free hosting service;
   free apps there turned out to expire after a month without activity, so it
-  came home instead: its own empty, unprivileged container (LXC 103), running as
+  came home instead: its own empty, unprivileged container, running as
   a non-root user, published with Tailscale Funnel. If it were ever broken into,
   there would be nothing next to it. Per-visitor rate limiting followed the next
   day, and Warden reports who visits and from which country.
@@ -112,8 +112,8 @@ so the agent defending the server can never lock its owner out of it.
 ## Stage 6 — Opening it up (September 24 – October 1)
 
 - **Remote access without touching the router** (it isn't mine to configure):
-  Tailscale, with the server routing the whole home subnet, so every container
-  is reachable at its normal address from anywhere — and Pi-hole blocks ads for
+  Tailscale, with the server acting as a subnet router, so the private services
+  are reachable from my own devices anywhere — and Pi-hole blocks ads for
   every device on the tailnet, wherever it is.
 - **This repo**, its docs and wiki; MIT licences for the agents; the skills
   library made public.
@@ -151,8 +151,7 @@ so the agent defending the server can never lock its owner out of it.
 - A UPS and a new CMOS battery — the fix for Stage 7's root cause.
 - Eos and Apex, fed with Apple Health data by an iOS Shortcut, and the hub as an
   app on the phone.
-- SSH keys-only, and closing the two services open to the whole home network
-  (the camera stream and rpcbind) — all flagged by the hub's security panel.
+- Working through the hardening checklist the hub's security panel produces.
 - Folding the print labeller into the printer panel.
 - Bigger hardware with a PCIe slot (for a GPU) once the four-core box runs out.
 
@@ -163,14 +162,14 @@ As of October 2, 2026: **19 repositories, 256 commits**.
 | Repository | First commit | Commits | |
 |---|---|---|---|
 | `chem-calculator` | 2026-05-22 | 42 | public |
-| `AI-School-Agent` | 2026-05-26 | 7 | 🔒 |
-| `engineering-ai-agent` (Forge) | 2026-05-27 | 25 | 🔒 |
+| School-assignment assistant | 2026-05-26 | 7 | 🔒 |
+| Forge (engineering agent) | 2026-05-27 | 25 | 🔒 |
 | `homelab-agent-skills` | 2026-06-16 | 54 | public |
-| `homelab-infra` | 2026-06-16 | 25 | 🔒 |
+| Infrastructure repo | 2026-06-16 | 25 | 🔒 |
 | the other agents (11 repos) | 2026-06-16 → 06-21 | 78 | 🔒 |
 | `chemcalc-handheld` | 2026-09-22 | 4 | public |
 | `homelab` (this repo) | 2026-09-24 | 17 | public |
-| `homelab-hub` | 2026-10-02 | 4 | 🔒 |
+| Homelab Hub web UI | 2026-10-02 | 4 | 🔒 |
 
 ## How it was built
 

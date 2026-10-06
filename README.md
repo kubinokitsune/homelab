@@ -1,7 +1,7 @@
 # 🏠 Homelab
 
 A self-hosted, personality-driven **multi-agent AI system** running on a single
-second-hand Dell OptiPlex — no cloud, no API bills, no GPU.
+second-hand mini desktop PC — no cloud, no API bills, no GPU.
 
 Twelve agents are built; **ten currently run** as services on the server (Apex
 and Eos exist as code but aren't deployed yet). Each one owns a domain (engineering, 3D printing,
@@ -20,30 +20,30 @@ ads, and file a morning briefing. I talk to them in Discord or through a private
 
 ```mermaid
 graph TD
-    subgraph HOST["Proxmox host — OptiPlex 9020M · i5-4590T · 16GB · 192.168.1.135"]
-        subgraph L100["LXC 100 · 192.168.1.115"]
-            A["12 Discord agents<br/>(systemd services)"]
+    subgraph HOST["Proxmox host — 4 cores · 16 GB"]
+        subgraph L100["Agent container"]
+            A["Discord agents<br/>(10 running)"]
             O["Ollama<br/>llama3.2 · nomic-embed · moondream"]
             Q["Qdrant<br/>vector memory"]
             S["Syncthing<br/>vault sync"]
             H["Homelab Hub<br/>web UI"]
         end
-        subgraph L101["LXC 101 · 192.168.1.136"]
+        subgraph L101["Printer container"]
             K["Klipper + Moonraker + Mainsail"]
         end
-        subgraph L102["LXC 102 · 192.168.1.53"]
+        subgraph L102["DNS container"]
             P["Pi-hole — DNS ad-blocking"]
         end
-        subgraph L103["LXC 103 · 192.168.1.54"]
+        subgraph L103["Public-app container"]
             C["Chem calculator<br/>gunicorn, non-root"]
         end
-        CAM["USB camera → ustreamer :8080"]
+        CAM["USB camera stream"]
     end
     PRINTER["Ender 3 S1 Pro"] -->|USB| K
     A --> O
     A --> Q
     A -->|Moonraker API| K
-    A -->|SSH| HOST
+    A -->|host access| HOST
     VAULT["Obsidian vault<br/>(laptop ⇄ server)"] <--> S
     C -->|Tailscale Funnel| WEB["🌍 public internet"]
     H <-->|loopback bridge| A
@@ -69,26 +69,26 @@ stage by stage: **[docs/history.md](docs/history.md)**
 
 ## The agent fleet
 
-| Agent | Domain | Repo |
+| Agent | Domain | Status |
 |---|---|---|
-| 🔧 **Forge** | Engineering mentor — calc, parts, build checklists, datasheets | `engineering-ai-agent` 🔒 |
-| 🧱 **Mason** | 3D printing — runs, watches, tunes and critiques prints | `printer-ai-agent` 🔒 |
-| 🖥️ **Hermes** | Server caretaker — health, auto-restart, anomaly ML, self-healing | `maintenance-ai-agent` 🔒 |
-| 🛡️ **Warden** | Security — auth watch, auto-ban, ports, posture audit | `security-ai-agent` 🔒 |
-| 🗂️ **Axiom** | Vault librarian — find, organize, dedupe, MOCs, auto-tagging | `librarian-ai-agent` 🔒 |
-| 📚 **Codex** | Sources (a local NotebookLM) — ingest files/links/**audio** | `codex-ai-agent` 🔒 |
-| 🎓 **Chiron** | Tutor — lessons, quizzes, spaced-repetition flashcards | `tutor-ai-agent` 🔒 |
-| 📅 **Kairos** | Scheduler — day plans, calendar, plain-English scheduling | `scheduler-ai-agent` 🔒 |
-| ☀️ **Iris** | Morning digest — compiles every agent's report + news | `digest-ai-agent` 🔒 |
-| 📋 **Scout** | Lacrosse recruiting pipeline | `recruitment-ai-agent` 🔒 |
-| 🏋️ **Apex** | Gym — training plans and progress | `gym-ai-agent` 🔒 |
-| 🌙 **Eos** | Recovery — daily readiness scoring | `recovery-ai-agent` 🔒 |
+| 🔧 **Forge** | Engineering mentor — calc, parts, build checklists, datasheets | running |
+| 🧱 **Mason** | 3D printing — runs, watches, tunes and critiques prints | running |
+| 🖥️ **Hermes** | Server caretaker — health, auto-restart, anomaly ML, self-healing | running |
+| 🛡️ **Warden** | Security — auth watch, auto-ban, ports, posture audit | running |
+| 🗂️ **Axiom** | Vault librarian — find, organize, dedupe, MOCs, auto-tagging | running |
+| 📚 **Codex** | Sources (a local NotebookLM) — ingest files/links/**audio** | running |
+| 🎓 **Chiron** | Tutor — lessons, quizzes, spaced-repetition flashcards | running |
+| 📅 **Kairos** | Scheduler — day plans, calendar, plain-English scheduling | running |
+| ☀️ **Iris** | Morning digest — compiles every agent's report + news | running |
+| 📋 **Scout** | Lacrosse recruiting pipeline | running |
+| 🏋️ **Apex** | Gym — training plans and progress | built, not deployed |
+| 🌙 **Eos** | Recovery — daily readiness scoring | built, not deployed |
 
 Per-agent detail, with every command: **[docs/agents.md](docs/agents.md)**
 
-> 🔒 = the agent's own private repo. This hub documents each one in depth; the
-> source can be shared on request. Two repos **are public** if you'd like to read
-> real code: the [shared skills library](https://github.com/kubinokitsune/homelab-agent-skills)
+> Each agent lives in its own private repo (🔒). This hub documents each one in
+> depth; the source can be shared on request. Two repos **are public** if you'd
+> like to read real code: the [shared skills library](https://github.com/kubinokitsune/homelab-agent-skills)
 > (the base class and every skill) and the [chemistry calculator](https://github.com/kubinokitsune/chem-calculator).
 
 ## Shared components
@@ -96,9 +96,9 @@ Per-agent detail, with every command: **[docs/agents.md](docs/agents.md)**
 | Repo | What it holds |
 |---|---|
 | [homelab-agent-skills](https://github.com/kubinokitsune/homelab-agent-skills) **(public)** | The `DiscordAgent` base class + every shared skill (vault, vector store, Moonraker, vision, ML, monitoring…). **An agent is an identity + a few commands on top of this.** |
-| `homelab-infra` 🔒 | Printer configs, deploy scripts, autostart, the Discord wiki generator, `.env` template |
-| `homelab-hub` 🔒 | The tailnet-only **web UI**: dashboard, chat with any agent, drag-and-drop calendar — [how it works](docs/hub.md) |
-| `AI-School-Agent` 🔒 | A standalone **Node.js** IB assignment assistant (Google Classroom + Playwright research → Obsidian briefs). Predates the Discord fleet and runs on its own — kept here because it writes to the same vault. |
+| Infrastructure repo 🔒 | Printer configs, deployment tooling, autostart, the Discord wiki generator, config templates |
+| Web hub repo 🔒 | The tailnet-only **web UI**: dashboard, chat with any agent, drag-and-drop calendar — [how it works](docs/hub.md) |
+| School-assignment assistant 🔒 | A standalone **Node.js** IB assignment assistant (Google Classroom + Playwright research → Obsidian briefs). Predates the Discord fleet and runs on its own — kept here because it writes to the same vault. |
 | **homelab** (this repo) | Front door + documentation |
 
 ---
@@ -107,30 +107,25 @@ Per-agent detail, with every command: **[docs/agents.md](docs/agents.md)**
 
 | Doc | Covers |
 |---|---|
-| [architecture.md](docs/architecture.md) | Hardware, Proxmox, the three containers, network map, design trade-offs |
-| [agents.md](docs/agents.md) | All 13 agents in depth — what each does and its commands |
+| [architecture.md](docs/architecture.md) | Hardware, Proxmox, how the lab is carved up, remote access, design trade-offs |
+| [agents.md](docs/agents.md) | All 12 agents in depth — what each does and its commands |
 | [skills-library.md](docs/skills-library.md) | The shared base class, the hooks, how to build a new agent |
 | [data-and-memory.md](docs/data-and-memory.md) | Obsidian vault, Qdrant, Ollama, RAG, and the anti-hallucination rules |
 | [printer.md](docs/printer.md) | Klipper stack, Mason's vision + ML failure detection |
-| [operations.md](docs/operations.md) | Deploy, backup, monitoring, security, remote access |
+| [operations.md](docs/operations.md) | Service model, deploys, backup, monitoring, alerting, security |
 | [hub.md](docs/hub.md) | The web UI — one bridge in the base class, tailnet-only access, server-enforced confirmations, the calendar, printer and server panels |
 | [history.md](docs/history.md) | How it was built — from a chemistry calculator in May to this, stage by stage, with what each stage taught |
 
 ## Dashboards
 
-| Service | URL |
+| Service | Who can reach it |
 |---|---|
-| **Homelab Hub** (agents, calendar, server) | `https://homelab-server.<tailnet>.ts.net` — tailnet only |
-| Mainsail (printer) | `http://192.168.1.136` |
-| Proxmox | `https://192.168.1.135:8006` |
-| Qdrant | `http://192.168.1.115:6333/dashboard` |
-| Syncthing | `http://192.168.1.115:8384` |
-| Pi-hole | `http://192.168.1.53/admin` |
-| Printer camera | `http://192.168.1.135:8080` |
+| **Homelab Hub** (agents, calendar, server) | My own devices only (tailnet) |
+| Printer, hypervisor, vector-database, sync and DNS dashboards | My own devices only — addresses deliberately not published |
 | Chem calculator (**public**) | `https://chemcalc.<tailnet>.ts.net` |
 
-All the `192.168.1.x` addresses work from anywhere via Tailscale's subnet route —
-same URL at home or away. The calculator is the only one the public can reach.
+Everything private is reachable from anywhere over Tailscale, but only from my
+own devices. The calculator is the only one the public can reach.
 
 ---
 
@@ -141,7 +136,7 @@ same URL at home or away. The calculator is the only one the public can reach.
    readings, actual vault notes, real command lists — or they say they don't
    know. See [the honesty rules](docs/data-and-memory.md#the-honesty-rules).
 3. **One base, many agents.** New capabilities added to the shared library
-   land in all 13 agents at once.
+   land in all 12 agents at once.
 4. **It should notice before I do.** Print failing, service down, disk filling,
    someone brute-forcing SSH → my phone buzzes.
 

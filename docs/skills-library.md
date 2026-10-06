@@ -7,7 +7,7 @@ identity and a handful of domain commands — which means a capability added her
 lands in all twelve agents at once.
 
 ```
-ai_agent_skills_liberies/skills/
+homelab-agent-skills/skills/
 ├── discord_agent.py     ← the base class everything is built on
 ├── llm.py  config.py  result.py  logging.py  errors.py  notifications.py
 ├── obsidian_vault.py  vault_index.py  vault_librarian.py  vault_tagger.py
@@ -153,7 +153,7 @@ works as one message.
 3. Register domain commands with `@agent.command(...)`.
 4. Add `@agent.on_context` if the agent controls anything real — if it can
    observe live state, it must, or it will guess.
-5. Add a `systemd` unit `agent-<name>.service` in LXC 100.
-6. Add the agent to the Discord wiki via `post_wiki.py`.
+5. Add a `systemd` service for it on the agent container.
+6. Add the agent to the Discord wiki (via the wiki script in the private infrastructure repo).
 
 Steps 1–4 are typically under 200 lines. Everything else is already done.

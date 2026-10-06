@@ -23,7 +23,7 @@ live data and vault context. Two conveniences on top:
 - **Command chaining** — several commands in one message are split and run in
   order.
 
-Every agent is also reachable **without Discord**, from the
+Every running agent is also reachable **without Discord**, from the
 [Homelab Hub](hub.md) web UI — same commands, same memory, through a loopback
 bridge in the shared base class. There, commands that move the printer, restart
 a service or change the firewall ask for confirmation first.
@@ -31,7 +31,6 @@ a service or change the firewall ask for confirmation first.
 ---
 
 ## 🔧 Forge — engineering mentor
-**Repo:** `engineering-ai-agent` 🔒
 
 The most built-out agent after Mason. Forge is a project partner: it does the
 maths, keeps the shopping list, tracks build progress, and remembers what broke
@@ -55,7 +54,7 @@ last time.
 ---
 
 ## 🧱 Mason — 3D printing
-**Repo:** `printer-ai-agent` 🔒 · **Deep dive:** [printer.md](printer.md)
+**Deep dive:** [printer.md](printer.md)
 
 By far the largest agent — full control of the printer, a camera, and two
 machine-learning models. It talks to Klipper through the Moonraker API.
@@ -87,7 +86,6 @@ it (see [operations.md](operations.md#alert-severity)).
 ---
 
 ## 🖥️ Hermes — server caretaker
-**Repo:** `maintenance-ai-agent` 🔒
 
 Watches the machine that everything else depends on. A ~120 s watchdog checks
 services, restarts what's dead, and learns what "normal" looks like.
@@ -102,7 +100,7 @@ services, restarts what's dead, and learns what "normal" looks like.
 | `!learn` / `!knowledge` / `!log` | Operational knowledge base and incident log |
 
 `!containers` now also shows each container's usage **against its own
-allocation**, and the watchdog watches LXC 103/101/102 the same way — alerting
+allocation**, and the watchdog watches the other containers the same way — alerting
 at 85% of a container's own RAM or 90% of its own CPU, or if one stops. The host
 can sit at 10% RAM while a 1 GB container is a breath from being OOM-killed, so
 the percentage that matters is of what each was allotted, not of the machine.
@@ -110,7 +108,6 @@ the percentage that matters is of what each was allotted, not of the machine.
 ---
 
 ## 🛡️ Warden — security
-**Repo:** `security-ai-agent` 🔒
 
 Watches authentication and network posture. A ~300 s watchdog auto-bans
 brute-forcers, and bans persist across reboots.
@@ -124,8 +121,8 @@ brute-forcers, and bans persist across reboots.
 | `!audit` | Posture audit — SSH config, firewall, Tailscale |
 | `!traffic [hours]` | Who visited the public calculator, from **which country**, and anything off |
 
-> **Hard whitelist.** `ban()` *refuses* to ban loopback, the LAN, the Tailscale
-> range `100.64.0.0/10`, or anything in `WARDEN_TRUSTED_IPS` — so the agent
+> **Hard whitelist.** `ban()` *refuses* to ban loopback, the local network, the
+> Tailscale range, or anything on a configured trusted list — so the agent
 > defending the server can never lock its owner out of it.
 
 Warden also reports the **public calculator's traffic** — visitor count, per-IP
@@ -140,7 +137,6 @@ until acknowledged (see [operations.md](operations.md#alert-severity)).
 ---
 
 ## 🗂️ Axiom — vault librarian
-**Repo:** `librarian-ai-agent` 🔒
 
 Curates the Obsidian vault: finds things, spots rot, and organises.
 
@@ -160,7 +156,6 @@ Curates the Obsidian vault: finds things, spots rot, and organises.
 ---
 
 ## 📚 Codex — sources (a local NotebookLM)
-**Repo:** `codex-ai-agent` 🔒
 
 Ingest a pile of material, then ask questions answered **from those sources
 only**, with citations.
@@ -179,7 +174,6 @@ CPU int8) — so lecture recordings and voice memos become searchable sources.
 ---
 
 ## 🎓 Chiron — tutor
-**Repo:** `tutor-ai-agent` 🔒
 
 Active recall with a real spaced-repetition scheduler.
 
@@ -194,7 +188,6 @@ Active recall with a real spaced-repetition scheduler.
 ---
 
 ## 📅 Kairos — scheduler
-**Repo:** `scheduler-ai-agent` 🔒
 
 Plans the day around fixed anchors (school, training) and how recovered you are.
 
@@ -215,7 +208,6 @@ arithmetic is deterministic now.
 ---
 
 ## ☀️ Iris — the morning digest
-**Repo:** `digest-ai-agent` 🔒
 
 The front page. Iris collects every other agent's report, the calendar, and the
 news into one briefing — deliberately terse, no filler.
@@ -244,7 +236,6 @@ reply/triage side is deliberately left to a human.)
 ---
 
 ## 📋 Scout — recruiting
-**Repo:** `recruitment-ai-agent` 🔒
 
 Runs the lacrosse recruiting pipeline.
 
@@ -258,29 +249,26 @@ Runs the lacrosse recruiting pipeline.
 ---
 
 ## 🏋️ Apex — gym
-**Repo:** `gym-ai-agent` 🔒
 
 `!plan` — training plan · `!progress` — progress over time.
 
-> ⚠️ **Not deployed.** No `agent-apex.service` exists on the server yet; the code
+> ⚠️ **Not deployed.** Apex has no service on the server yet; the code
 > is written but has never run.
 
 ## 🌙 Eos — recovery
-**Repo:** `recovery-ai-agent` 🔒
 
 `!readiness` — daily readiness score, which Kairos reads when planning and Iris
 reports in the digest.
 
-> ⚠️ **Not deployed.** No `agent-eos.service` exists on the server yet; the code
+> ⚠️ **Not deployed.** Eos has no service on the server yet; the code
 > is written but has never run. Note this means Kairos' `!readiness` and Iris'
 > digest currently have no Eos to pull from.
 
 ---
 
-## Not part of the fleet: 🎒 AI-School-Agent
+## Not part of the fleet: 🎒 the school-assignment assistant
 
-`AI-School-Agent` 🔒 is a
-standalone **Node.js** tool that predates the Discord fleet. It opens Google
+A private 🔒, standalone **Node.js** tool that predates the Discord fleet. It opens Google
 Classroom in Chrome, reads an assignment, researches it with Playwright, reads
 local files and Google Docs, and writes a structured IB assignment brief into
 the Obsidian vault (with an assignment registry and English/Spanish

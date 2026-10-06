@@ -1,0 +1,2 @@
+# Local-only list of private names the wiki guard blocks. Never publish.
+scripts/private-denylist.txt

@@ -1,8 +1,8 @@
 # The printer stack
 
 **Hardware:** Creality Ender 3 S1 Pro, reflashed with **Klipper**
-**Host:** LXC 101 · `192.168.1.136` · pinned to its own CPU core
-**Agent:** [Mason](agents.md#-mason--3d-printing) (`printer-ai-agent` 🔒)
+**Host:** its own container · pinned to a dedicated CPU core
+**Agent:** [Mason](agents.md#-mason--3d-printing) (private repo 🔒)
 
 ---
 
@@ -10,22 +10,22 @@
 
 ```
 Ender 3 S1 Pro (STM32 MCU, Klipper firmware)
-        │  USB — CH341 serial bridge → /dev/ttyUSB0
+        │  USB — CH341 serial bridge
         ▼
-LXC 101 ── Klipper      motion planning on the host, dumb-fast MCU
-        ├─ Moonraker    :7125   HTTP + WebSocket API
-        └─ Mainsail     :80     web UI  →  http://192.168.1.136
+printer container ── Klipper   motion planning on the host, dumb-fast MCU
+        ├─ Moonraker    HTTP + WebSocket API
+        └─ Mainsail     web UI (private)
                 │
                 ▼  Moonraker API
-             Mason (in LXC 100)
+             Mason (in the agent container)
                 │
-                ├── camera  →  ustreamer :8080  →  moondream vision
+                ├── camera  →  ustreamer  →  moondream vision
                 └── ML      →  RandomForest + IsolationForest
 ```
 
 Klipper does the motion planning on the Linux host and streams precisely timed
-steps to the printer's MCU — which is why the host's timing matters and why LXC
-101 gets a core to itself.
+steps to the printer's MCU — which is why the host's timing matters and why the
+printer container gets a core to itself.
 
 ### Flashing notes (hard-won)
 
@@ -49,8 +49,8 @@ A print failed at 5:30 a.m. The kernel log showed:
 usb 2-10: USB disconnect, device number 7
 ```
 
-…and the device came back as **`/dev/ttyUSB1`**. Klipper was configured for
-`ttyUSB0`, so it could not reconnect, and the print was dead. Roughly **30
+…and the device came back under a **different device name**. Klipper was
+configured for the old one, so it could not reconnect, and the print was dead. Roughly **30
 disconnects** have now been logged.
 
 **This is a hardware fault and no software can fix it.** The CH341 is a
@@ -86,7 +86,7 @@ the `fan` object so fan state is observable.
 
 ## Vision
 
-A USB webcam on the printer, streamed by **ustreamer** on `:8080`, read by the
+A USB webcam on the printer, streamed by **ustreamer**, read by the
 **moondream** vision model.
 
 ### Adaptive exposure
@@ -144,14 +144,14 @@ failure ≈ 30 %, clean ≈ 70 %) because that's the number a human can act on.
 The models are only as good as their labels, and labelling a whole print
 good-or-bad is crude — a print can be clean for three hours and fail in the
 fourth. So frames are labelled **individually**, through a little mobile web app
-(`printer-ai-agent/label_ui/`): it shows one unlabelled frame at a time as a
+(in Mason's private repo): it shows one unlabelled frame at a time as a
 card, you **swipe right for good, left for bad**, and the label lands in that
 print's `frame_labels.json`. The failure detector prefers a frame's own label
 over the whole-print one, falling back to the print label when a frame hasn't
 been swiped.
 
-It runs in LXC 100 and is reached from the phone **over Tailscale at
-`http://192.168.1.115:5005`** — deliberately *not* public, since these are
+It runs in the agent container and is reached from the phone **over
+Tailscale** — deliberately *not* public, since these are
 photos of the print bed. Path-traversal-guarded, and every label is a single
 `POST`.
 

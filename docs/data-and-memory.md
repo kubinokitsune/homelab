@@ -21,7 +21,7 @@ consequence ends up as a markdown file in a real Obsidian vault.
 
 ## The Obsidian vault
 
-Lives at `/root/vault` in LXC 100, kept in sync with the laptop by **Syncthing**
+Lives on the server, kept in sync with the laptop by **Syncthing**
 (continuous, peer-to-peer, no cloud service in the middle).
 
 Agents both **read** it (as retrieval context) and **write** to it:
@@ -59,8 +59,7 @@ trusting a claim.
 
 ## Qdrant — vector memory
 
-Runs in Docker in LXC 100 (`:6333`, dashboard at
-`http://192.168.1.115:6333/dashboard`). Collections are per-agent
+Runs in Docker on the server (its dashboard is private). Collections are per-agent
 (`<agent>_memory`) plus shared indexes over the vault and ingested sources.
 
 Retrieval is standard RAG: embed the query, pull the nearest chunks, prepend

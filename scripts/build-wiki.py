@@ -12,6 +12,7 @@ Usage:
 
 from __future__ import annotations
 
+import hashlib
 import re
 import sys
 from pathlib import Path
@@ -37,6 +38,63 @@ RAW_IMAGES = "https://raw.githubusercontent.com/kubinokitsune/homelab/main/docs/
 
 # A relative markdown link to a .md doc, optionally under docs/ and with an anchor.
 _DOC_LINK = re.compile(r"\[([^\]]*)\]\((?:docs/)?([a-z0-9-]+)\.md(#[^)]*)?\)")
+
+
+# --- Redaction guard ---------------------------------------------------------
+# The wiki is public, so the build FAILS instead of publishing internal details.
+# Only generic patterns live in this file: a public script must not itself
+# contain the strings it forbids. Anything naming a specific private repo, host
+# or device goes in scripts/private-denylist.txt (one regex per line, '#'
+# comments) -- that file is git-ignored and never published.
+GUARD = [
+    ("IPv4 address",          re.compile(r"\b(?!203\.0\.113\.)(?:\d{1,3}\.){3}\d{1,3}\b")),
+    ("masked IP (100.x)",     re.compile(r"\b\d{1,3}\.x(?:\.x)*\b")),
+    ("loopback / localhost",  re.compile(r"127\.0\.0\.1|\blocalhost\b")),
+    ("port number",           re.compile(r"(?<!\d):\d{4,5}\b|(?<![\d:]):(?:22|53|80|85|111|443)\b")),
+    ("container / VM id",     re.compile(r"\b(?:LXC|CT|VM|container)\s*#?\d{2,4}\b|\b(?:pct|qm)\s+[a-z]+")),
+    ("private repo name",     re.compile(r"[a-z]+-ai-agent\b|\bhomelab-(?!agent-skills\b)[a-z]+\b|\bai_agent_skills_\w+")),
+    ("tailnet hostname",      re.compile(r"\btail[0-9a-f]{6,}\b|(?<!<tailnet>)\.ts\.net\b")),
+    ("service / unit name",   re.compile(r"\bagent-(?:forge|mason|hermes|warden|axiom|codex|chiron|kairos|iris|scout|apex|eos)\b|\.service\b|\bsystemctl\b|\bjournalctl\b")),
+    ("deploy script / tool",  re.compile(r"\bdeploy-[\w-]+\.sh\b|\bpost_wiki\b|\bscp\b")),
+    ("filesystem path",       re.compile(r"(?<![\w<])/(?:root|opt|etc|home|var|usr|tmp|dev/tty)\b|~/|\bOneDrive\b|\b[A-Za-z]:\\")),
+    ("env var / secret",      re.compile(r"\.env\b|\b[A-Z][A-Z0-9]+_(?:TOKEN|KEY|SECRET|IPS|PASSWORD)\b|\bgh[pousr]_\w+|\bxox[bpa]-|BEGIN [A-Z ]*PRIVATE KEY")),
+    ("discord id / webhook",  re.compile(r"\b\d{17,20}\b|discord(?:app)?\.com/api/webhooks")),
+    ("hardware vendor/model", re.compile(r"\b(?:Dell|HP|Lenovo|Micron)\b|\bi[3579]-\d{4,5}[A-Z]{0,2}\b")),
+    ("security posture",      re.compile(r"(?i)PermitRootLogin|PasswordAuthentication|\brpcbind\b|\bknown-weak\b|root password")),
+]
+DENYLIST = ROOT / "scripts" / "private-denylist.txt"
+
+
+def _denylist() -> list[tuple[str, re.Pattern]]:
+    if not DENYLIST.exists():
+        print(f"WARNING: {DENYLIST.name} not found -- specific private names are NOT being checked")
+        return []
+    lines = [l.strip() for l in DENYLIST.read_text(encoding="utf-8").splitlines()]
+    return [("private denylist", re.compile(l, re.I)) for l in lines if l and not l.startswith("#")]
+
+
+def scan(name: str, text: str, rules) -> list[str]:
+    hits = []
+    for n, line in enumerate(text.splitlines(), 1):
+        for label, rx in rules:
+            if rx.search(line):
+                hits.append(f"{name}:{n}: {label}")
+    return hits
+
+
+def check_images(images_dir: Path) -> list[str]:
+    """Every image must match a hash a human approved after looking at it."""
+    manifest = images_dir / "approved.sha256"      # made with: sha256sum *.png > approved.sha256
+    if not manifest.exists():
+        return [f"{manifest.name}: missing -- review the images, then create it"]
+    approved = {}
+    for line in manifest.read_text().splitlines():
+        if line.strip():
+            digest, fname = line.split(None, 1)
+            approved[fname.strip().lstrip("*")] = digest
+    return [f"{p.name}: new or changed image has not been approved"
+            for p in sorted(images_dir.glob("*.png"))
+            if approved.get(p.name) != hashlib.sha256(p.read_bytes()).hexdigest()]
 
 
 def page_name(stem: str) -> str:
@@ -67,17 +125,24 @@ def main(wiki_dir: str) -> None:
     if missing or unlisted:
         raise SystemExit(f"PAGES out of date -- missing: {missing}, unlisted: {unlisted}")
 
-    (out / "Home.md").write_text(rewrite((ROOT / "README.md").read_text(encoding="utf-8")), encoding="utf-8")
-    for stem, _ in PAGES:
-        src = (docs / f"{stem}.md").read_text(encoding="utf-8")
-        (out / f"{page_name(stem)}.md").write_text(rewrite(src), encoding="utf-8")
+    # Build every page in memory first, scan it, and only then write anything.
     sidebar = ["### 🏠 Homelab wiki", "", "- [Home](Home)"]
     sidebar += [f"- [{title}]({page_name(stem)})" for stem, title in PAGES]
-    (out / "_Sidebar.md").write_text("\n".join(sidebar) + "\n", encoding="utf-8")
-    (out / "_Footer.md").write_text(
-        f"Self-hosted multi-agent homelab · [main repo]({REPO}) · MIT\n", encoding="utf-8")
+    pages = {"Home.md": rewrite((ROOT / "README.md").read_text(encoding="utf-8"))}
+    for stem, _ in PAGES:
+        pages[f"{page_name(stem)}.md"] = rewrite((docs / f"{stem}.md").read_text(encoding="utf-8"))
+    pages["_Sidebar.md"] = "\n".join(sidebar) + "\n"
+    pages["_Footer.md"] = f"Self-hosted multi-agent homelab · [main repo]({REPO}) · MIT\n"
+
+    rules = GUARD + _denylist()
+    problems = [h for name, text in pages.items() for h in scan(name, text, rules)]
+    problems += check_images(docs / "images")
+    if problems:
+        raise SystemExit("redaction guard failed -- nothing was written:\n  " + "\n  ".join(problems))
+    for name, text in pages.items():
+        (out / name).write_text(text, encoding="utf-8")
     print(f"built Home + {len(PAGES)} pages into {out}")
-    images = sorted(p.name for p in (docs / "images").glob("*")) if (docs / "images").exists() else []
+    images = sorted(p.name for p in (docs / "images").glob("*.png")) if (docs / "images").exists() else []
     if images:
         print(f"images are served from the main repo ({len(images)}): push it before checking the wiki")
 

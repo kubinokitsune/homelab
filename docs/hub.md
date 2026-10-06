@@ -4,8 +4,8 @@ Discord was the only way into the agents. That's fine on a phone and clumsy
 everywhere else, so the fleet now has a second front end: a small web app,
 reachable only from my own devices over Tailscale.
 
-**Repo:** `homelab-hub` 🔒 · **URL:** `https://homelab-server.<tailnet>.ts.net`
-(tailnet-only) · installable as an app (PWA)
+**Repo:** private 🔒 · **URL:** tailnet-only, not published
+· installable as an app (PWA)
 
 | Page | What it does |
 |---|---|
@@ -22,18 +22,17 @@ with the same calendar, vault and memory.
 
 ![Overview: server, today, fleet status and the latest activity](images/hub-overview.png)
 
-<details><summary><b>More screenshots</b> — the server, security and printer panels</summary>
+<details><summary><b>More screenshots</b> — the printer and server panels</summary>
 
-![Server panel: host, history charts, containers vs. their allocations, services, incident log](images/hub-server.png)
+![Printer panel (camera and file names hidden): status banner, controls, temperatures, live tuning, files](images/hub-printer.png)
 
-![Security panel (IP addresses blurred here): exposure, posture, SSH logins by source, ports, bans, calculator traffic](images/hub-security.png)
-
-![Printer panel (camera blurred here): status banner, controls, temperatures, live tuning, files](images/hub-printer.png)
+![Server panel (container and service names hidden): host, history charts, containers vs. their allocations, services, incident log](images/hub-server.png)
 
 </details>
 
 > Screenshots are taken with the hub's presentation mode (`?present`), which
-> hides the signed-in account and blurs the camera.
+> hides the signed-in account. Names, addresses and the camera are then covered
+> with solid boxes before publishing.
 
 ---
 
@@ -42,8 +41,8 @@ with the same calendar, vault and memory.
 ```mermaid
 graph LR
     D["Laptop / phone<br/>on the tailnet"] -->|HTTPS| S["Tailscale Serve<br/>on the Proxmox host"]
-    S --> H["homelab-hub<br/>LXC 100 :8090"]
-    H -->|loopback| B["Agent bridges<br/>127.0.0.1:8701-8712"]
+    S --> H["Homelab Hub<br/>(agent container)"]
+    H -->|loopback| B["Agent bridges<br/>(loopback only)"]
     H -->|reads| K["calendar · reports<br/>host health"]
     B --> X["the same dispatch<br/>as Discord"]
 ```
@@ -145,17 +144,14 @@ every port with who can reach it, sessions, bans, and the calculator's traffic.
 Bans and unbans are `!commands` to Warden, so they're confirm-gated and keep his
 refusal to ban the LAN, the tailnet or the owner.
 
-Two design notes. Logins are counted **on the host** (`journalctl | sed | uniq
--c`) rather than shipped over: the agents SSH in about 7,000 times a day, and a
+Two design notes. Logins are counted **on the host** rather than shipped over: the agents SSH in about 7,000 times a day, and a
 week of raw log lines is megabytes per refresh. And splitting by source is what
 makes the number readable — "7,400 logins" is alarming until it says 7,100 are
 the agents checking on the host and the rest are my laptop.
 
-What it surfaced, honestly listed on the page: SSH accepts passwords and root
-can log in with one (reachable only from home and the tailnet, but the fix is
-keys-only); the printer camera and rpcbind are open to anyone on the Wi-Fi; and
-the calculator's "visitors" are mostly bots probing for WordPress logins that
-don't exist. There's deliberately no "ban" button on web visitors: Funnel
+What it surfaced was a short hardening checklist, which I'm working through
+(deliberately not itemised here), and the fact that the calculator's "visitors"
+are mostly bots probing for WordPress logins that don't exist. There's deliberately no "ban" button on web visitors: Funnel
 traffic never reaches the host firewall, so the calculator's rate limiter is
 the right tool there.
 
@@ -210,4 +206,4 @@ replies. For the phone, the plan is free first —
 a home-screen web app, web push, and an iOS Shortcuts automation that sends
 Apple Health data (sleep, HRV, resting heart rate) to the hub so Eos can compute
 readiness — and a native wrapper only if something genuinely needs one. The full
-list is in the `homelab-hub` README.
+list is in the hub's (private) README.
