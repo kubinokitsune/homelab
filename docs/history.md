@@ -11,7 +11,7 @@ timeline
     June 2026 : Shared skills library and agent base class : Proxmox server and agents move off the laptop : Klipper printer with Mason and Hermes
     July to August 2026 : Pi-hole ad blocking : Plain-English scheduling and audio sources : Auto-ban for brute-force logins
     September 2026 : Casio and Raspberry Pi Pico calculators : Calculator goes public : Remote access and public docs
-    October 2026 : Power-loss alerts : Homelab Hub web UI
+    October 2026 : Power-loss alerts : Homelab Hub web UI : Casio add-in v1.0
 ```
 
 ---
@@ -81,7 +81,7 @@ The hardware is a second-hand **small-form-factor office PC** (4 cores, 16 GB,
 - **June 28–29 —** every agent can be taught (`!learn` / `!recall`), and the
   [honesty rules](data-and-memory.md#the-honesty-rules) arrived after the agents
   were caught inventing temperatures, note titles and saved files.
-- **July 1 —** Pi-hole ad blocking, in its own container.
+- **July 1 —** Pi-hole ad blocking, in its own container (still a test on one laptop).
 
 ## Stage 4 — Summer (July – August 2026)
 
@@ -113,8 +113,8 @@ so the agent defending the server can never lock its owner out of it.
 
 - **Remote access without touching the router** (it isn't mine to configure):
   Tailscale, with the server acting as a subnet router, so the private services
-  are reachable from my own devices anywhere — and Pi-hole blocks ads for
-  every device on the tailnet, wherever it is.
+  are reachable from my own devices anywhere. (Pi-hole is still in a test
+  phase, filtering only my laptop.)
 - **This repo**, its docs and wiki; MIT licences for the agents; the skills
   library made public.
 - **Pages that repeat until answered**, reserved for the two things worth waking
@@ -146,6 +146,24 @@ so the agent defending the server can never lock its owner out of it.
 
 ![The Homelab Hub overview](images/hub-overview.png)
 
+## Stage 8 — Tightening up, and a finished add-in (October 5–13)
+
+- **Public means public.** Before more people read these docs, they were
+  scrubbed of internal network details, and the script that generates the wiki
+  now refuses to publish a page that matches a private denylist (**October 6**).
+- **Fewer false alarms.** The laptop watchdog now checks the public calculator's
+  address before paging, so a laptop that has merely dropped off the private
+  network no longer reports the server as down (**October 6**).
+- **The digest stopped running a day behind.** Agents' nightly reports were
+  filed under the day they were written rather than the day they describe, so
+  Iris kept summarising yesterday (**October 7**).
+- **The Casio add-in, finished.** Whole equations typed straight in for the
+  balancer and atom economy, bond enthalpies from the IB data booklet, and a UI
+  rebuilt to look native on the fx-CG50 — the calculator's own battery icon, a
+  real ALPHA indicator, and a Terminus bitmap font. **v1.0.0** shipped on
+  **October 12**, covered by 793 checks (426 on the chemistry, 367 on the
+  screens).
+
 ## What's next
 
 - A UPS and a new CMOS battery — the fix for Stage 7's root cause.
@@ -157,18 +175,18 @@ so the agent defending the server can never lock its owner out of it.
 
 ## By the numbers
 
-As of October 2, 2026: **19 repositories, 256 commits**.
+As of October 13, 2026: **19 repositories, 303 commits**.
 
 | Repository | First commit | Commits | |
 |---|---|---|---|
-| `chem-calculator` | 2026-05-22 | 42 | public |
+| `chem-calculator` | 2026-05-22 | 78 | public |
 | School-assignment assistant | 2026-05-26 | 7 | 🔒 |
 | Forge (engineering agent) | 2026-05-27 | 25 | 🔒 |
-| `homelab-agent-skills` | 2026-06-16 | 54 | public |
-| Infrastructure repo | 2026-06-16 | 25 | 🔒 |
-| the other agents (11 repos) | 2026-06-16 → 06-21 | 78 | 🔒 |
-| `chemcalc-handheld` | 2026-09-22 | 4 | public |
-| `homelab` (this repo) | 2026-09-24 | 17 | public |
+| `homelab-agent-skills` | 2026-06-16 | 56 | public |
+| Infrastructure repo | 2026-06-16 | 28 | 🔒 |
+| the other agents (11 repos) | 2026-06-16 → 06-21 | 79 | 🔒 |
+| `chemcalc-handheld` | 2026-09-22 | 7 | public |
+| `homelab` (this repo) | 2026-09-24 | 19 | public |
 | Homelab Hub web UI | 2026-10-02 | 4 | 🔒 |
 
 ## How it was built

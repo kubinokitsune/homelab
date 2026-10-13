@@ -43,7 +43,8 @@ last time.
 | `!parts` / `!order <item>` / `!ordered <item>` | Parts & shopping list with order state |
 | `!build <name>` / `!steps` / `!step <n>` / `!done` | Build checklists with step tracking |
 | `!stuck <problem>` / `!resolved <fix>` / `!errors` / `!patterns` | Error log — and ML clustering over it to surface recurring failure patterns |
-| `!search <q>` / `!reindex` | Search the engineering side of the vault |
+| `!search <q>` | Web search, formatted for Discord |
+| `!reindex` | Re-embed the engineering knowledge folders |
 | `!review` / `!report` | Project review and status |
 
 > `!spec` used to synthesise specs with the LLM. It timed out at 90 s — twice —
@@ -180,8 +181,8 @@ Active recall with a real spaced-repetition scheduler.
 | Command | Does |
 |---|---|
 | `!explain <topic>` / `!quiz <topic>` | Teach and test |
-| `!card <front> / <back>` / `!gencards` | Create flashcards, by hand or generated |
-| `!review` / `!flip` | Run a review session |
+| `!card <question> \| <answer> [\| subject]` / `!gencards` | Create flashcards, by hand or generated |
+| `!review [subject]` / `!flip` | Run a review session — it ends on its own when the due cards are done |
 | `!again` `!hard` `!good` `!easy` | Grade a card — drives the **SM-2** algorithm, which sets the next interval |
 | `!cards` / `!studied` / `!streak` | Deck stats and study streak |
 
@@ -219,13 +220,15 @@ news into one briefing — deliberately terse, no filler.
 | `!inbox` | Read-only summary of recent email |
 
 News comes from **real RSS feeds** — NYT World, BBC World, La Nación (CR), The
-Tico Times, El País — and every item is date-checked, with anything older than
+Tico Times, El País, plus tech/maker feeds (Hackaday, Tom's Hardware, Hacker
+News, Hackster) and a few subreddits (r/homelab, r/PrintedCircuitBoard,
+r/lacrosse) — and every item is date-checked, with anything older than
 **366 days** dropped. (CNN's feed was excluded after it was found serving 2023
 articles as current.)
 
 Iris also reports **overnight progress on multi-day prints**, so a 2-day job
 shows up in the morning with how far it got. Each night's digest is saved to
-Obsidian as a dated note (`Homelab Digests/<date>.md`).
+Obsidian as a dated note (`🤖 Homelab/Digests/<date>.md`).
 
 **Read-only email.** With a Gmail app password configured, Iris summarises the
 inbox — sender, subject, a one-line preview — in `!inbox` and the morning digest.

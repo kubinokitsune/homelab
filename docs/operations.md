@@ -113,11 +113,12 @@ subnet-route SNAT every tailnet request arrives from the host's own address, so 
 LAN device gets a 403. Dangerous commands additionally need an explicit confirm,
 enforced by each agent's bridge rather than by the UI.
 
-**Pi-hole** (in its own container) filters ads at the DNS layer for every
-device that uses it as a resolver — including, via Tailscale's global-nameserver
-setting, every device on the tailnet anywhere in the world. That works *because*
-subnet-route SNAT makes remote queries appear to come from the host itself, which
-already satisfies Pi-hole's `listeningMode = "LOCAL"`; no loosening required.
+**Pi-hole** (in its own container) filters ads at the DNS layer for any device
+that uses it as a resolver. It is still in a **test phase**, with only my laptop
+pointed at it. The plan for every other device is Tailscale's global-nameserver
+setting; that works *because* subnet-route SNAT makes remote queries appear to
+come from the host itself, which already satisfies Pi-hole's
+`listeningMode = "LOCAL"`, so no loosening would be required.
 
 **One service is public: the public-app container**, the chem calculator, via Tailscale Funnel.
 Everything protecting it is in the container rather than in front of it — see

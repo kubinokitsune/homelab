@@ -69,7 +69,7 @@ Proxmox host
 │     └── USB serial passed through → the 3D printer
 │
 ├── DNS container              ← the filter
-│     └── Pi-hole v6 — network-wide DNS ad-blocking
+│     └── Pi-hole v6 — DNS ad-blocking (test phase)
 │
 ├── public-app container       ← the only public thing
 │     ├── gunicorn (non-root) → Chemistry Calculator Flask app
@@ -107,11 +107,11 @@ container. (This chip is the lab's least reliable component — see
 
 ### The DNS container (the filter)
 
-Network-wide DNS ad-blocking using the StevenBlack blocklist. Because it filters
-at the DNS layer, it covers **every device that uses it as a resolver** — phones,
-TVs, consoles — with no per-device software. Currently serving one floor of the
-house, plus every device on the tailnet from anywhere in the world (see
-[operations.md](operations.md#security)).
+DNS ad-blocking using the StevenBlack blocklist. Because it filters at the DNS
+layer, it can cover **every device that uses it as a resolver** — phones, TVs,
+consoles — with no per-device software. It is still in a **test phase**: right
+now only my laptop uses it, and rolling it out to the rest of my devices is a
+next step (see [operations.md](operations.md#security)).
 
 Two limits worth stating, because they look like faults and are not:
 
